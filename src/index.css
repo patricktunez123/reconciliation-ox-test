@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #353353;
+}
+.top_container {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.momo_report_container {
+  background-color: aliceblue;
+  min-height: 50vh;
+}
+
+.our_report_container {
+  background-color: antiquewhite;
+  min-height: 50vh;
+}
+
+.green_res_container {
+  background-color: beige;
+  min-height: 50vh;
+}
+
+.head h6 {
+  color: #fff;
+}
+
+.head {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  row-gap: 1rem;
+}
