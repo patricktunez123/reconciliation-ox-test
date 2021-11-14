@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Button } from "antd";
 import * as XLSX from "xlsx";
+import { BsCheckAll } from "react-icons/bs";
 
 const Home = () => {
   const [items, setItems] = useState([]);
   const [internalItems, setInternalItems] = useState([]);
+  const [match, setMatch] = useState([]);
 
   const readMoMoExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -35,8 +37,6 @@ const Home = () => {
     });
   };
 
-  console.log("this is the data", items);
-
   const readInternalExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -66,10 +66,22 @@ const Home = () => {
     });
   };
 
+  const handleClick = () => {
+    const res = internalItems.filter(function (internalItem) {
+      return items.some(function (item) {
+        return (
+          internalItem["MoMo Ref"] && internalItem["MoMo Ref"] === item?.Id
+        );
+      });
+    });
+    setMatch(res);
+  };
+
+  console.log("match", match);
   return (
     <>
       <div className="top_container">
-        <Button>Reconcile</Button>
+        <Button onClick={handleClick}>Reconcile</Button>
       </div>
 
       <div className="row">
@@ -162,7 +174,7 @@ const Home = () => {
                 </thead>
                 <tbody>
                   {internalItems.map((d) => (
-                    <tr key={d["Order Date"] && d["Order Date"]}>
+                    <tr key={d["MoMo Ref"] && d["MoMo Ref"]}>
                       <th>{d["Order Date"] && d["Order Date"]}</th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
@@ -205,11 +217,12 @@ const Home = () => {
                     <th scope="col">Truck used</th>
                     <th scope="col">TIN Number</th>
                     <th scope="col">EBM Processed: Yes/No</th>
+                    <th scope="col">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {internalItems.map((d) => (
-                    <tr key={d["Order Date"] && d["Order Date"]}>
+                  {match.map((d) => (
+                    <tr key={d["MoMo Ref"] && d["Order Date"]}>
                       <th>{d["Order Date"] && d["Order Date"]}</th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
@@ -223,6 +236,9 @@ const Home = () => {
                       <th>
                         {d["EBM Processed: Yes/No"] &&
                           d["EBM Processed: Yes/No"]}
+                      </th>
+                      <th>
+                        <BsCheckAll />
                       </th>
                     </tr>
                   ))}

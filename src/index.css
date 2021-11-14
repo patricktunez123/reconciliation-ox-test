@@ -4,25 +4,31 @@ body {
   background: #353353;
 }
 .top_container {
-  margin: 1rem 0;
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  position: fixed;
+  top: 10px;
+  right: 10px;
 }
 
 .momo_report_container {
   background-color: aliceblue;
-  min-height: 50vh;
+  min-height: 10vh;
+}
+
+.report_container .head {
+  margin-top: 100px;
 }
 
 .our_report_container {
   background-color: antiquewhite;
-  min-height: 50vh;
+  min-height: 10vh;
 }
 
 .green_res_container {
   background-color: beige;
-  min-height: 50vh;
+  min-height: 80vh;
 }
 
 .head h6 {
@@ -34,4 +40,11 @@ body {
   justify-content: flex-start;
   align-items: center;
   row-gap: 1rem;
+}
+
+.test {
+  color: aqua;
+}
+.test2 {
+  color: red;
 }
