@@ -39,6 +39,35 @@ const Home = () => {
     });
   };
 
+  const readMoMoKayoveExcel = (file) => {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+
+        const wsname = wb.SheetNames[1];
+
+        const ws = wb.Sheets[wsname];
+
+        const data = XLSX.utils.sheet_to_json(ws);
+
+        resolve(data);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+
+    promise.then((d) => {
+      setItems(d);
+    });
+  };
+
   const readInternalExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
@@ -64,7 +93,40 @@ const Home = () => {
     });
 
     promise.then((d) => {
-      setInternalItems(d);
+      const result = d.filter((item) => item.Depot === "Tyazo Depot");
+      setInternalItems(result);
+      console.log("$$$$$$$$$$", result);
+    });
+  };
+
+  const readInternalKayoveExcel = (file) => {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+
+        const wsname = wb.SheetNames[2];
+
+        const ws = wb.Sheets[wsname];
+
+        const data = XLSX.utils.sheet_to_json(ws);
+
+        resolve(data);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+
+    promise.then((d) => {
+      const result = d.filter((item) => item.Depot === "Kayove Depot");
+      setInternalItems(result);
+      console.log("$$$$$$$$$$", result);
     });
   };
 
@@ -96,23 +158,38 @@ const Home = () => {
   return (
     <>
       <div className="top_container">
-        <Button onClick={handleClick}>Reconcile</Button>
+        <Button type="primary" onClick={handleClick}>
+          Reconcile
+        </Button>
       </div>
 
       <div className="row">
         <div className="col-md-12 col-lg-12 col-12">
           <div className="report_container">
             <div className="head">
-              <input
-                className="mb-2"
-                type="file"
-                placeholder="Upload MoMo Report"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  readMoMoExcel(file);
-                }}
-              />
-              <h6>MoMo REPORT</h6>
+              <div>
+                <input
+                  type="file"
+                  placeholder="Upload MoMo Report"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    readMoMoExcel(file);
+                  }}
+                />
+                <h6>MoMo Tyzo REPORT</h6>
+              </div>
+
+              <div>
+                <input
+                  type="file"
+                  placeholder="Upload MoMo Report"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    readMoMoKayoveExcel(file);
+                  }}
+                />
+                <h6>MoMo Kayove REPORT</h6>
+              </div>
             </div>
 
             <div className="momo_report_container">
@@ -161,16 +238,31 @@ const Home = () => {
         <div className="col-md-12 col-lg-12 col-12">
           <div className="report_container">
             <div className="head">
-              <input
-                className="mb-2 mt-2"
-                type="file"
-                placeholder="Upload Internal Report"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  readInternalExcel(file);
-                }}
-              />
-              <h6>Internal REPORT</h6>
+              <div>
+                <input
+                  className="mb-2 mt-2"
+                  type="file"
+                  placeholder="Upload Internal Report"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    readInternalExcel(file);
+                  }}
+                />
+                <h6>Internal REPORT (Tyazo)</h6>
+              </div>
+
+              <div>
+                <input
+                  className="mb-2 mt-2"
+                  type="file"
+                  placeholder="Upload Internal Report"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    readInternalKayoveExcel(file);
+                  }}
+                />
+                <h6>Internal REPORT (Kayove Depot)</h6>
+              </div>
             </div>
             <div className="our_report_container">
               <table className="table container">
@@ -220,6 +312,10 @@ const Home = () => {
           <div className="report_container">
             <div className="head">
               <h6>Reconsile results</h6>
+              <div>
+                <h5 className="green">Matchs: {match.length} </h5>
+                <h5 className="red">UnMatchs: {unMatch.length} </h5>
+              </div>
             </div>
             <div className="green_res_container">
               <table className="table container">
