@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "antd";
+import ReactToPrint from "react-to-print";
 import * as XLSX from "xlsx";
 import { BsCheckAll } from "react-icons/bs";
 import { VscError } from "react-icons/vsc";
+import { AiFillPrinter } from "react-icons/ai";
 
 const Home = () => {
+  const componentRef = useRef();
   const [items, setItems] = useState([]);
   const [internalItems, setInternalItems] = useState([]);
   const [match, setMatch] = useState([]);
@@ -313,6 +316,17 @@ const Home = () => {
             <div className="head">
               <h6>Reconsile results</h6>
               <div>
+                <ReactToPrint
+                  trigger={() => (
+                    <Button>
+                      <AiFillPrinter />
+                      Print
+                    </Button>
+                  )}
+                  content={() => componentRef.current}
+                />
+              </div>
+              <div>
                 <h5 className="green">Matchs: {match.length} </h5>
                 <h5 className="red">UnMatchs: {unMatch.length} </h5>
               </div>
@@ -335,7 +349,7 @@ const Home = () => {
                     <th scope="col">Status</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody ref={componentRef}>
                   {match.map((d) => (
                     <tr key={d["MoMo Ref"] && d["Order Date"]}>
                       <th>{d["Order Date"] && d["Order Date"]}</th>
