@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Button } from "antd";
 import * as XLSX from "xlsx";
 import { BsCheckAll } from "react-icons/bs";
+import { VscError } from "react-icons/vsc";
 
 const Home = () => {
   const [items, setItems] = useState([]);
   const [internalItems, setInternalItems] = useState([]);
   const [match, setMatch] = useState([]);
+  const [unMatch, setUnMatch] = useState([]);
 
   const readMoMoExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -75,9 +77,22 @@ const Home = () => {
       });
     });
     setMatch(res);
+
+    var result = internalItems.filter(function (internalItem) {
+      return !items.some(function (item) {
+        return (
+          internalItem["MoMo Ref"] && internalItem["MoMo Ref"] === item?.Id
+        );
+      });
+    });
+
+    setUnMatch(result);
   };
 
-  console.log("match", match);
+  console.log("all", internalItems.length);
+  console.log("match", match.length);
+  console.log("unmActh", unMatch.length);
+  console.log("unmActh", unMatch);
   return (
     <>
       <div className="top_container">
@@ -118,23 +133,25 @@ const Home = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((d) => (
-                    <tr key={d?.Date}>
-                      <th>{d?.Id}</th>
-                      <th>
-                        {d["External Transaction Id"] &&
-                          d["External Transaction Id"]}
-                      </th>
-                      <th>{d?.Date}</th>
-                      <th>{d?.Status}</th>
-                      <th>{d["From Name"] && d["From Name"]}</th>
-                      <th>{d["To Name"] && d["To Name"]}</th>
-                      <th>{d?.Amount}</th>
-                      <th>{d?.Fee}</th>
-                      <th>{d?.Balance}</th>
-                      <th>{d?.Currency}</th>
-                    </tr>
-                  ))}
+                  {match.length === 0
+                    ? items.map((d) => (
+                        <tr key={d?.Date}>
+                          <th>{d?.Id}</th>
+                          <th>
+                            {d["External Transaction Id"] &&
+                              d["External Transaction Id"]}
+                          </th>
+                          <th>{d?.Date}</th>
+                          <th>{d?.Status}</th>
+                          <th>{d["From Name"] && d["From Name"]}</th>
+                          <th>{d["To Name"] && d["To Name"]}</th>
+                          <th>{d?.Amount}</th>
+                          <th>{d?.Fee}</th>
+                          <th>{d?.Balance}</th>
+                          <th>{d?.Currency}</th>
+                        </tr>
+                      ))
+                    : null}
                 </tbody>
               </table>
             </div>
@@ -173,24 +190,26 @@ const Home = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {internalItems.map((d) => (
-                    <tr key={d["MoMo Ref"] && d["MoMo Ref"]}>
-                      <th>{d["Order Date"] && d["Order Date"]}</th>
-                      <th>{d?.Depot}</th>
-                      <th>{d["Client names"] && d["Client names"]}</th>
-                      <th>{d["Order value"] && d["Order value"]}</th>
-                      <th>{d["Paid Amount"] && d["Paid Amount"]}</th>
-                      <th>{d["Unpaid Amount"] && d["Unpaid Amount"]}</th>
-                      <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
-                      <th>{d["Paid date"] && d["Paid date"]}</th>
-                      <th>{d["Truck used"] && d["Truck used"]}</th>
-                      <th>{d["TIN Number"] && d["TIN Number"]}</th>
-                      <th>
-                        {d["EBM Processed: Yes/No"] &&
-                          d["EBM Processed: Yes/No"]}
-                      </th>
-                    </tr>
-                  ))}
+                  {match.length === 0
+                    ? internalItems.map((d) => (
+                        <tr key={d["MoMo Ref"] && d["MoMo Ref"]}>
+                          <th>{d["Order Date"] && d["Order Date"]}</th>
+                          <th>{d?.Depot}</th>
+                          <th>{d["Client names"] && d["Client names"]}</th>
+                          <th>{d["Order value"] && d["Order value"]}</th>
+                          <th>{d["Paid Amount"] && d["Paid Amount"]}</th>
+                          <th>{d["Unpaid Amount"] && d["Unpaid Amount"]}</th>
+                          <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
+                          <th>{d["Paid date"] && d["Paid date"]}</th>
+                          <th>{d["Truck used"] && d["Truck used"]}</th>
+                          <th>{d["TIN Number"] && d["TIN Number"]}</th>
+                          <th>
+                            {d["EBM Processed: Yes/No"] &&
+                              d["EBM Processed: Yes/No"]}
+                          </th>
+                        </tr>
+                      ))
+                    : null}
                 </tbody>
               </table>
             </div>
@@ -238,7 +257,29 @@ const Home = () => {
                           d["EBM Processed: Yes/No"]}
                       </th>
                       <th>
-                        <BsCheckAll />
+                        <BsCheckAll className="green" />
+                      </th>
+                    </tr>
+                  ))}
+
+                  {unMatch.map((d) => (
+                    <tr key={d["MoMo Ref"] && d["Order Date"]}>
+                      <th>{d["Order Date"] && d["Order Date"]}</th>
+                      <th>{d?.Depot}</th>
+                      <th>{d["Client names"] && d["Client names"]}</th>
+                      <th>{d["Order value"] && d["Order value"]}</th>
+                      <th>{d["Paid Amount"] && d["Paid Amount"]}</th>
+                      <th>{d["Unpaid Amount"] && d["Unpaid Amount"]}</th>
+                      <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
+                      <th>{d["Paid date"] && d["Paid date"]}</th>
+                      <th>{d["Truck used"] && d["Truck used"]}</th>
+                      <th>{d["TIN Number"] && d["TIN Number"]}</th>
+                      <th>
+                        {d["EBM Processed: Yes/No"] &&
+                          d["EBM Processed: Yes/No"]}
+                      </th>
+                      <th>
+                        <VscError className="red" />
                       </th>
                     </tr>
                   ))}

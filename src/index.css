@@ -42,9 +42,9 @@ body {
   row-gap: 1rem;
 }
 
-.test {
-  color: aqua;
+.green {
+  color: green;
 }
-.test2 {
+.red {
   color: red;
 }
