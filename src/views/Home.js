@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Button } from "antd";
 import ReactToPrint from "react-to-print";
+import moment from "moment";
 import * as XLSX from "xlsx";
 import { BsCheckAll } from "react-icons/bs";
 import { VscError } from "react-icons/vsc";
@@ -331,7 +332,7 @@ const Home = () => {
                 </thead>
                 <tbody ref={componentRef}>
                   {match.map((d) => (
-                    <tr key={d["MoMo Ref"] && d["Order Date"]}>
+                    <tr key={d["MoMo Ref"] && d["MoMo Ref"]}>
                       <th>{d["Order Date"] && d["Order Date"]}</th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
@@ -360,8 +361,11 @@ const Home = () => {
                   ))}
 
                   {unMatch.map((d) => (
-                    <tr key={d["MoMo Ref"] && d["Order Date"]}>
-                      <th>{d["Order Date"] && d["Order Date"]}</th>
+                    <tr key={d["MoMo Ref"] && d["MoMo Ref"]}>
+                      <th>
+                        {d["Order Date"] &&
+                          moment(d["Order Date"]).format("LLL")}
+                      </th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
                       <th>
