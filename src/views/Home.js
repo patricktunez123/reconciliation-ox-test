@@ -343,7 +343,7 @@ const Home = () => {
                     </Button>
                   }
                 >
-                  <ExcelSheet data={unMatch} name="Matchs">
+                  <ExcelSheet data={unMatch} name="Fails">
                     <ExcelColumn label="Order Date" value="Order Date" />
                     <ExcelColumn label="Depot" value="Depot" />
                     <ExcelColumn label="Client names" value="Client names" />
