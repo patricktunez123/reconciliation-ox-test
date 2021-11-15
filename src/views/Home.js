@@ -133,6 +133,34 @@ const Home = () => {
     setUnMatch(unmatched);
   };
 
+  const testArr = [
+    {
+      ref: "2000,400",
+      name: "John Doe",
+    },
+    {
+      ref: "6000, 800",
+      name: "Jane Doe",
+    },
+    {
+      ref: 10000,
+      name: "Single data",
+    },
+  ];
+
+  const handleTest = () => {
+    const res = testArr.filter((i) => typeof i.ref === "string");
+
+    console.log("res", res);
+    res.map((i) => {
+      const split = i.ref.split(" ").join("");
+      const _split = split.split(",");
+      console.log("split", _split);
+      return _split;
+    });
+  };
+
+  console.log("test array==>", testArr);
   return (
     <>
       <div className="top_container">
@@ -162,6 +190,10 @@ const Home = () => {
                 />
                 <h6>MoMo Tyzo REPORT</h6>
               </div>
+
+              <Button type="primary" onClick={handleTest}>
+                Test
+              </Button>
 
               <div>
                 <input
