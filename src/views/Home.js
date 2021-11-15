@@ -142,6 +142,12 @@ const Home = () => {
       </div>
 
       <div className="row">
+        <div className="col-12">
+          <h5 className="white">
+            After doing the reconciliation one Depot, refresh the page to
+            Reconcile an other!
+          </h5>
+        </div>
         <div className="col-md-12 col-lg-12 col-12">
           <div className="report_container">
             <div className="head">
