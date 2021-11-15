@@ -5,6 +5,7 @@ import * as XLSX from "xlsx";
 import { BsCheckAll } from "react-icons/bs";
 import { VscError } from "react-icons/vsc";
 import { AiFillPrinter } from "react-icons/ai";
+import { numberWithCommas } from "../helpers/numbersFormatter";
 
 const Home = () => {
   const componentRef = useRef();
@@ -195,9 +196,9 @@ const Home = () => {
                           <th>{d?.Status}</th>
                           <th>{d["From Name"] && d["From Name"]}</th>
                           <th>{d["To Name"] && d["To Name"]}</th>
-                          <th>{d?.Amount}</th>
-                          <th>{d?.Fee}</th>
-                          <th>{d?.Balance}</th>
+                          <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
+                          <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
+                          <th>{d?.Balance && numberWithCommas(d?.Balance)}</th>
                           <th>{d?.Currency}</th>
                         </tr>
                       ))
@@ -261,9 +262,18 @@ const Home = () => {
                           <th>{d["Order Date"] && d["Order Date"]}</th>
                           <th>{d?.Depot}</th>
                           <th>{d["Client names"] && d["Client names"]}</th>
-                          <th>{d["Order value"] && d["Order value"]}</th>
-                          <th>{d["Paid Amount"] && d["Paid Amount"]}</th>
-                          <th>{d["Unpaid Amount"] && d["Unpaid Amount"]}</th>
+                          <th>
+                            {d["Order value"] &&
+                              numberWithCommas(d["Order value"])}
+                          </th>
+                          <th>
+                            {d["Paid Amount"] &&
+                              numberWithCommas(d["Paid Amount"])}
+                          </th>
+                          <th>
+                            {d["Unpaid Amount"] &&
+                              numberWithCommas(d["Unpaid Amount"])}
+                          </th>
                           <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
                           <th>{d["Paid date"] && d["Paid date"]}</th>
                           <th>{d["Truck used"] && d["Truck used"]}</th>
@@ -325,9 +335,16 @@ const Home = () => {
                       <th>{d["Order Date"] && d["Order Date"]}</th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
-                      <th>{d["Order value"] && d["Order value"]}</th>
-                      <th>{d["Paid Amount"] && d["Paid Amount"]}</th>
-                      <th>{d["Unpaid Amount"] && d["Unpaid Amount"]}</th>
+                      <th>
+                        {d["Order value"] && numberWithCommas(d["Order value"])}
+                      </th>
+                      <th>
+                        {d["Paid Amount"] && numberWithCommas(d["Paid Amount"])}
+                      </th>
+                      <th>
+                        {d["Unpaid Amount"] &&
+                          numberWithCommas(d["Unpaid Amount"])}
+                      </th>
                       <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
                       <th>{d["Paid date"] && d["Paid date"]}</th>
                       <th>{d["Truck used"] && d["Truck used"]}</th>
@@ -347,9 +364,16 @@ const Home = () => {
                       <th>{d["Order Date"] && d["Order Date"]}</th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
-                      <th>{d["Order value"] && d["Order value"]}</th>
-                      <th>{d["Paid Amount"] && d["Paid Amount"]}</th>
-                      <th>{d["Unpaid Amount"] && d["Unpaid Amount"]}</th>
+                      <th>
+                        {d["Order value"] && numberWithCommas(d["Order value"])}
+                      </th>
+                      <th>
+                        {d["Paid Amount"] && numberWithCommas(d["Paid Amount"])}
+                      </th>
+                      <th>
+                        {d["Unpaid Amount"] &&
+                          numberWithCommas(d["Unpaid Amount"])}
+                      </th>
                       <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
                       <th>{d["Paid date"] && d["Paid date"]}</th>
                       <th>{d["Truck used"] && d["Truck used"]}</th>
