@@ -1,15 +1,18 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Button } from "antd";
-import ReactToPrint from "react-to-print";
+import ReactExport from "react-export-excel";
 import moment from "moment";
 import * as XLSX from "xlsx";
 import { BsCheckAll } from "react-icons/bs";
 import { VscError } from "react-icons/vsc";
-import { AiFillPrinter } from "react-icons/ai";
+import { BiSpreadsheet } from "react-icons/bi";
 import { numberWithCommas } from "../helpers/numbersFormatter";
 
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
+
 const Home = () => {
-  const componentRef = useRef();
   const [items, setItems] = useState([]);
   const [internalItems, setInternalItems] = useState([]);
   const [match, setMatch] = useState([]);
@@ -297,15 +300,32 @@ const Home = () => {
             <div className="head">
               <h6>Reconsile results</h6>
               <div>
-                <ReactToPrint
-                  trigger={() => (
+                <ExcelFile
+                  element={
                     <Button>
-                      <AiFillPrinter />
-                      Print
+                      <BiSpreadsheet />
+                      Download matchs
                     </Button>
-                  )}
-                  content={() => componentRef.current}
-                />
+                  }
+                >
+                  <ExcelSheet data={match} name="Matchs">
+                    <ExcelColumn label="Order Date" value="Order Date" />
+                    <ExcelColumn label="Depot" value="Depot" />
+                    <ExcelColumn label="Client names" value="Client names" />
+                    <ExcelColumn label="Order value" value="Order value" />
+                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
+                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
+                    <ExcelColumn label="Paid date" value="Paid date" />
+                    <ExcelColumn label="Truck used" value="Truck used" />
+                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn
+                      label="EBM Processed: Yes/No"
+                      value="EBM Processed: Yes/No"
+                    />
+                    <ExcelColumn label="Status" value="Status" />
+                  </ExcelSheet>
+                </ExcelFile>
               </div>
               <div>
                 <h5 className="green">Matchs: {match.length} </h5>
@@ -330,7 +350,7 @@ const Home = () => {
                     <th scope="col">Status</th>
                   </tr>
                 </thead>
-                <tbody ref={componentRef}>
+                <tbody>
                   {match.map((d) => (
                     <tr key={d["MoMo Ref"] && d["MoMo Ref"]}>
                       <th>{d["Order Date"] && d["Order Date"]}</th>
