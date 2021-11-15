@@ -17,18 +17,12 @@ const Home = () => {
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(file);
-
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-
         const wb = XLSX.read(bufferArray, { type: "buffer" });
-
         const wsname = wb.SheetNames[0];
-
         const ws = wb.Sheets[wsname];
-
         const data = XLSX.utils.sheet_to_json(ws);
-
         resolve(data);
       };
 
@@ -37,8 +31,8 @@ const Home = () => {
       };
     });
 
-    promise.then((d) => {
-      setItems(d);
+    promise.then((data) => {
+      setItems(data);
     });
   };
 
@@ -46,18 +40,12 @@ const Home = () => {
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(file);
-
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-
         const wb = XLSX.read(bufferArray, { type: "buffer" });
-
         const wsname = wb.SheetNames[1];
-
         const ws = wb.Sheets[wsname];
-
         const data = XLSX.utils.sheet_to_json(ws);
-
         resolve(data);
       };
 
@@ -66,8 +54,8 @@ const Home = () => {
       };
     });
 
-    promise.then((d) => {
-      setItems(d);
+    promise.then((data) => {
+      setItems(data);
     });
   };
 
@@ -75,18 +63,12 @@ const Home = () => {
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(file);
-
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-
         const wb = XLSX.read(bufferArray, { type: "buffer" });
-
         const wsname = wb.SheetNames[2];
-
         const ws = wb.Sheets[wsname];
-
         const data = XLSX.utils.sheet_to_json(ws);
-
         resolve(data);
       };
 
@@ -95,10 +77,9 @@ const Home = () => {
       };
     });
 
-    promise.then((d) => {
-      const result = d.filter((item) => item.Depot === "Tyazo Depot");
+    promise.then((data) => {
+      const result = data.filter((item) => item.Depot === "Tyazo Depot");
       setInternalItems(result);
-      console.log("$$$$$$$$$$", result);
     });
   };
 
@@ -106,18 +87,12 @@ const Home = () => {
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(file);
-
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-
         const wb = XLSX.read(bufferArray, { type: "buffer" });
-
         const wsname = wb.SheetNames[2];
-
         const ws = wb.Sheets[wsname];
-
         const data = XLSX.utils.sheet_to_json(ws);
-
         resolve(data);
       };
 
@@ -126,42 +101,37 @@ const Home = () => {
       };
     });
 
-    promise.then((d) => {
-      const result = d.filter((item) => item.Depot === "Kayove Depot");
+    promise.then((data) => {
+      const result = data.filter((item) => item.Depot === "Kayove Depot");
       setInternalItems(result);
-      console.log("$$$$$$$$$$", result);
     });
   };
 
-  const handleClick = () => {
-    const res = internalItems.filter(function (internalItem) {
-      return items.some(function (item) {
+  const handleReconcile = () => {
+    const macthed = internalItems.filter((internalItem) => {
+      return items.some((item) => {
         return (
           internalItem["MoMo Ref"] && internalItem["MoMo Ref"] === item?.Id
         );
       });
     });
-    setMatch(res);
+    setMatch(macthed);
 
-    var result = internalItems.filter(function (internalItem) {
-      return !items.some(function (item) {
+    const unmatched = internalItems.filter((internalItem) => {
+      return !items.some((item) => {
         return (
           internalItem["MoMo Ref"] && internalItem["MoMo Ref"] === item?.Id
         );
       });
     });
 
-    setUnMatch(result);
+    setUnMatch(unmatched);
   };
 
-  console.log("all", internalItems.length);
-  console.log("match", match.length);
-  console.log("unmActh", unMatch.length);
-  console.log("unmActh", unMatch);
   return (
     <>
       <div className="top_container">
-        <Button type="primary" onClick={handleClick}>
+        <Button type="primary" onClick={handleReconcile}>
           Reconcile
         </Button>
       </div>
