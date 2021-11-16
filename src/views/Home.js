@@ -17,7 +17,7 @@ const Home = () => {
   const [internalItems, setInternalItems] = useState([]);
   const [match, setMatch] = useState([]);
   const [unMatch, setUnMatch] = useState([]);
-  const [withTwoRefs, setWithTwoRefs] = useState([]);
+  const withManyRefs = [];
 
   const readMoMoExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -137,10 +137,25 @@ const Home = () => {
     setUnMatch(_unmatched);
 
     const withTwo = unmatched.filter((i) => typeof i["MoMo Ref"] === "string");
-    setWithTwoRefs(withTwo);
+
+    const splited = withTwo?.map((i) => {
+      const split = i["MoMo Ref"]?.split(" ")?.join("");
+      const _split = split.split(",");
+      return _split;
+    });
+
+    splited.forEach((item) => {
+      return item.forEach((item2) => {
+        const found = items.find((theItems) => {
+          return theItems?.Id === +item2;
+        });
+
+        withManyRefs.push(found);
+        console.log("withManyRefs", withManyRefs);
+      });
+    });
   };
 
-  console.log("wthissss", withTwoRefs);
   return (
     <>
       <div className="top_container">
