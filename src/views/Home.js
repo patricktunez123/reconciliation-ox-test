@@ -17,6 +17,7 @@ const Home = () => {
   const [internalItems, setInternalItems] = useState([]);
   const [match, setMatch] = useState([]);
   const [unMatch, setUnMatch] = useState([]);
+  const [withTwoRefs, setWithTwoRefs] = useState([]);
 
   const readMoMoExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -130,9 +131,16 @@ const Home = () => {
       });
     });
 
-    setUnMatch(unmatched);
+    const _unmatched = unmatched.filter(
+      (i) => typeof i["MoMo Ref"] !== "string"
+    );
+    setUnMatch(_unmatched);
+
+    const withTwo = unmatched.filter((i) => typeof i["MoMo Ref"] === "string");
+    setWithTwoRefs(withTwo);
   };
 
+  console.log("wthissss", withTwoRefs);
   return (
     <>
       <div className="top_container">
