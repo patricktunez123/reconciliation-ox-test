@@ -396,8 +396,15 @@ const Home = () => {
                 </ExcelFile>
               </div>
               <div>
-                <h5 className="green">Matchs: {match.length} </h5>
-                <h5 className="red">UnMatchs: {unMatch.length} </h5>
+                <h5 className="green">
+                  Matchs: {match.length + manyRefData.length}{" "}
+                </h5>
+                <h5 className="red">
+                  {/* UnMatchs:{" "}
+                  {manyRefData.length !== 0
+                    ? unMatch.length - manyRefDataNotFound.length
+                    : unMatch.length} */}
+                </h5>
               </div>
             </div>
 
