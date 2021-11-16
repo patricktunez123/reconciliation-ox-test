@@ -18,7 +18,9 @@ const Home = () => {
   const [match, setMatch] = useState([]);
   const [unMatch, setUnMatch] = useState([]);
   const [manyRefData, setManyRefData] = useState([]);
+  const [manyRefDataNotFound, setManyRefDataNotFound] = useState([]);
   const withManyRefs = [];
+  const withManyRefsNotFount = [];
 
   const readMoMoExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -150,14 +152,20 @@ const Home = () => {
         const found = items.find((theItems) => {
           return theItems?.Id === +item2;
         });
-
-        withManyRefs.push(found);
+        if (found) {
+          withManyRefs.push(found);
+        } else {
+          const notFound = items.find((theItems) => {
+            return theItems?.Id !== +item2;
+          });
+          withManyRefsNotFount.push(notFound);
+        }
       });
     });
     setManyRefData(withManyRefs);
+    setManyRefDataNotFound(withManyRefsNotFount);
   };
 
-  console.log("manyRefData", manyRefData);
   return (
     <>
       <div className="top_container">
@@ -476,7 +484,7 @@ const Home = () => {
               </table>
             </div>
 
-            {manyRefData.length !== 0 ? (
+            {manyRefData.length !== 0 || manyRefDataNotFound.length !== 0 ? (
               <>
                 <h6>With two refs</h6>
                 <div className="green_res_container">
@@ -493,27 +501,58 @@ const Home = () => {
                         <th scope="col">Fee</th>
                         <th scope="col">Balance</th>
                         <th scope="col">Currency</th>
-                        <th scope="col"></th>
+                        <th scope="col">Status</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {manyRefData.map((d) => (
-                        <tr key={d?.Date}>
-                          <th>{d?.Id}</th>
-                          <th>
-                            {d["External Transaction Id"] &&
-                              d["External Transaction Id"]}
-                          </th>
-                          <th>{d?.Date}</th>
-                          <th>{d?.Status}</th>
-                          <th>{d["From Name"] && d["From Name"]}</th>
-                          <th>{d["To Name"] && d["To Name"]}</th>
-                          <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
-                          <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
-                          <th>{d?.Balance && numberWithCommas(d?.Balance)}</th>
-                          <th>{d?.Currency}</th>
-                        </tr>
-                      ))}
+                      {manyRefData.length !== 0 &&
+                        manyRefData.map((d) => (
+                          <tr key={d?.Date}>
+                            <th>{d?.Id}</th>
+                            <th>
+                              {d["External Transaction Id"] &&
+                                d["External Transaction Id"]}
+                            </th>
+                            <th>{d?.Date}</th>
+                            <th>{d?.Status}</th>
+                            <th>{d["From Name"] && d["From Name"]}</th>
+                            <th>{d["To Name"] && d["To Name"]}</th>
+                            <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
+                            <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
+                            <th>
+                              {d?.Balance && numberWithCommas(d?.Balance)}
+                            </th>
+                            <th>{d?.Currency}</th>
+                            <th>
+                              <BsCheckAll className="green" />
+                            </th>
+                          </tr>
+                        ))}
+                    </tbody>
+                    <tbody>
+                      {manyRefDataNotFound.length !== 0 &&
+                        manyRefDataNotFound.map((d) => (
+                          <tr key={d?.Date}>
+                            <th>{d?.Id}</th>
+                            <th>
+                              {d["External Transaction Id"] &&
+                                d["External Transaction Id"]}
+                            </th>
+                            <th>{d?.Date}</th>
+                            <th>{d?.Status}</th>
+                            <th>{d["From Name"] && d["From Name"]}</th>
+                            <th>{d["To Name"] && d["To Name"]}</th>
+                            <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
+                            <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
+                            <th>
+                              {d?.Balance && numberWithCommas(d?.Balance)}
+                            </th>
+                            <th>{d?.Currency}</th>
+                            <th>
+                              <VscError className="red" />
+                            </th>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
