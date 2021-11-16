@@ -486,7 +486,9 @@ const Home = () => {
 
             {manyRefData.length !== 0 || manyRefDataNotFound.length !== 0 ? (
               <>
-                <h6>With two refs</h6>
+                <h6 className="white text-center">
+                  Detected more than one ref IDs
+                </h6>
                 <div className="green_res_container">
                   <table className="table container">
                     <thead>
@@ -528,8 +530,7 @@ const Home = () => {
                             </th>
                           </tr>
                         ))}
-                    </tbody>
-                    <tbody>
+
                       {manyRefDataNotFound.length !== 0 &&
                         manyRefDataNotFound.map((d) => (
                           <tr key={d?.Date}>
