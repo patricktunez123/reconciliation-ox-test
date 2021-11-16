@@ -17,6 +17,7 @@ const Home = () => {
   const [internalItems, setInternalItems] = useState([]);
   const [match, setMatch] = useState([]);
   const [unMatch, setUnMatch] = useState([]);
+  const [manyRefData, setManyRefData] = useState([]);
   const withManyRefs = [];
 
   const readMoMoExcel = (file) => {
@@ -151,11 +152,12 @@ const Home = () => {
         });
 
         withManyRefs.push(found);
-        console.log("withManyRefs", withManyRefs);
       });
     });
+    setManyRefData(withManyRefs);
   };
 
+  console.log("manyRefData", manyRefData);
   return (
     <>
       <div className="top_container">
@@ -390,6 +392,7 @@ const Home = () => {
                 <h5 className="red">UnMatchs: {unMatch.length} </h5>
               </div>
             </div>
+
             <div className="green_res_container">
               <table className="table container">
                 <thead>
@@ -472,6 +475,50 @@ const Home = () => {
                 </tbody>
               </table>
             </div>
+
+            {manyRefData.length !== 0 ? (
+              <>
+                <h6>With two refs</h6>
+                <div className="green_res_container">
+                  <table className="table container">
+                    <thead>
+                      <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">External Transaction Id</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">From Name</th>
+                        <th scope="col">To Name</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Fee</th>
+                        <th scope="col">Balance</th>
+                        <th scope="col">Currency</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {manyRefData.map((d) => (
+                        <tr key={d?.Date}>
+                          <th>{d?.Id}</th>
+                          <th>
+                            {d["External Transaction Id"] &&
+                              d["External Transaction Id"]}
+                          </th>
+                          <th>{d?.Date}</th>
+                          <th>{d?.Status}</th>
+                          <th>{d["From Name"] && d["From Name"]}</th>
+                          <th>{d["To Name"] && d["To Name"]}</th>
+                          <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
+                          <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
+                          <th>{d?.Balance && numberWithCommas(d?.Balance)}</th>
+                          <th>{d?.Currency}</th>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
       </div>
