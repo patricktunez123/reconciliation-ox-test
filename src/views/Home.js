@@ -28,7 +28,7 @@ const Home = () => {
       fileReader.readAsArrayBuffer(file);
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wb = XLSX.read(bufferArray, { type: "buffer", cellDates: true });
         const wsname = wb.SheetNames[1];
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
@@ -51,7 +51,7 @@ const Home = () => {
       fileReader.readAsArrayBuffer(file);
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wb = XLSX.read(bufferArray, { type: "buffer", cellDates: true });
         const wsname = wb.SheetNames[2];
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
@@ -74,7 +74,7 @@ const Home = () => {
       fileReader.readAsArrayBuffer(file);
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wb = XLSX.read(bufferArray, { type: "buffer", cellDates: true });
         const wsname = wb.SheetNames[3];
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
@@ -98,7 +98,7 @@ const Home = () => {
       fileReader.readAsArrayBuffer(file);
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wb = XLSX.read(bufferArray, { type: "buffer", cellDates: true });
         const wsname = wb.SheetNames[3];
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
@@ -229,13 +229,19 @@ const Home = () => {
                 <tbody>
                   {match.length === 0
                     ? items.map((d) => (
-                        <tr key={d?.Date}>
+                        <tr key={d?.Id}>
                           <th>{d?.Id}</th>
                           <th>
                             {d["External Transaction Id"] &&
                               d["External Transaction Id"]}
                           </th>
-                          <th>{d?.Date}</th>
+                          <th>
+                            {d?.Date === "-" ||
+                            d?.Date === "" ||
+                            d?.Date === " -"
+                              ? "-"
+                              : d?.Date && moment(d?.Date).format("LLL")}
+                          </th>
                           <th>{d?.Status}</th>
                           <th>{d["From Name"] && d["From Name"]}</th>
                           <th>{d["To Name"] && d["To Name"]}</th>
@@ -302,7 +308,14 @@ const Home = () => {
                   {match.length === 0
                     ? internalItems.map((d) => (
                         <tr key={d["MoMo Ref"] && d["MoMo Ref"]}>
-                          <th>{d["Order Date"] && d["Order Date"]}</th>
+                          <th>
+                            {d["Order Date"] === "-" ||
+                            d["Order Date"] === "" ||
+                            d["Order Date"] === " -"
+                              ? "-"
+                              : d["Order Date"] &&
+                                moment(d["Order Date"]).format("LLL")}
+                          </th>
                           <th>{d?.Depot}</th>
                           <th>{d["Client names"] && d["Client names"]}</th>
                           <th>
@@ -318,7 +331,15 @@ const Home = () => {
                               numberWithCommas(d["Unpaid Amount"])}
                           </th>
                           <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
-                          <th>{d["Paid date"] && d["Paid date"]}</th>
+
+                          <th>
+                            {d["Paid date"] === "-" ||
+                            d["Paid date"] === "" ||
+                            d["Paid date"] === " -"
+                              ? "-"
+                              : d["Paid date"] &&
+                                moment(d["Paid date"]).format("LLL")}
+                          </th>
                           <th>{d["Truck used"] && d["Truck used"]}</th>
                           <th>{d["TIN Number"] && d["TIN Number"]}</th>
                           <th>
@@ -429,7 +450,14 @@ const Home = () => {
                 <tbody>
                   {match.map((d) => (
                     <tr key={d["MoMo Ref"] && d["MoMo Ref"]}>
-                      <th>{d["Order Date"] && d["Order Date"]}</th>
+                      <th>
+                        {d["Order Date"] === "-" ||
+                        d["Order Date"] === "" ||
+                        d["Order Date"] === " -"
+                          ? "-"
+                          : d["Order Date"] &&
+                            moment(d["Order Date"]).format("LLL")}
+                      </th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
                       <th>
@@ -443,7 +471,15 @@ const Home = () => {
                           numberWithCommas(d["Unpaid Amount"])}
                       </th>
                       <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
-                      <th>{d["Paid date"] && d["Paid date"]}</th>
+
+                      <th>
+                        {d["Paid date"] === "-" ||
+                        d["Paid date"] === "" ||
+                        d["Paid date"] === " -"
+                          ? "-"
+                          : d["Paid date"] &&
+                            moment(d["Paid date"]).format("LLL")}
+                      </th>
                       <th>{d["Truck used"] && d["Truck used"]}</th>
                       <th>{d["TIN Number"] && d["TIN Number"]}</th>
                       <th>
@@ -459,8 +495,12 @@ const Home = () => {
                   {unMatch.map((d) => (
                     <tr key={d["MoMo Ref"] && d["Order Date"]}>
                       <th>
-                        {d["Order Date"] &&
-                          moment(d["Order Date"]).format("LLL")}
+                        {d["Order Date"] === "-" ||
+                        d["Order Date"] === "" ||
+                        d["Order Date"] === " -"
+                          ? "-"
+                          : d["Order Date"] &&
+                            moment(d["Order Date"]).format("LLL")}
                       </th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
@@ -475,7 +515,15 @@ const Home = () => {
                           numberWithCommas(d["Unpaid Amount"])}
                       </th>
                       <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
-                      <th>{d["Paid date"] && d["Paid date"]}</th>
+
+                      <th>
+                        {d["Paid date"] === "-" ||
+                        d["Paid date"] === "" ||
+                        d["Paid date"] === " -"
+                          ? "-"
+                          : d["Paid date"] &&
+                            moment(d["Paid date"]).format("LLL")}
+                      </th>
                       <th>{d["Truck used"] && d["Truck used"]}</th>
                       <th>{d["TIN Number"] && d["TIN Number"]}</th>
                       <th>
@@ -516,13 +564,19 @@ const Home = () => {
                     <tbody>
                       {manyRefData.length !== 0 &&
                         manyRefData.map((d) => (
-                          <tr key={d?.Date}>
+                          <tr key={d?.Id}>
                             <th>{d?.Id}</th>
                             <th>
                               {d["External Transaction Id"] &&
                                 d["External Transaction Id"]}
                             </th>
-                            <th>{d?.Date}</th>
+                            <th>
+                              {d?.Date === "-" ||
+                              d?.Date === "" ||
+                              d?.Date === " -"
+                                ? "-"
+                                : d?.Date && moment(d?.Date).format("LLL")}
+                            </th>
                             <th>{d?.Status}</th>
                             <th>{d["From Name"] && d["From Name"]}</th>
                             <th>{d["To Name"] && d["To Name"]}</th>
@@ -540,13 +594,19 @@ const Home = () => {
 
                       {manyRefDataNotFound.length !== 0 &&
                         manyRefDataNotFound.map((d) => (
-                          <tr key={d?.Date}>
+                          <tr key={d?.Id}>
                             <th>{d?.Id}</th>
                             <th>
                               {d["External Transaction Id"] &&
                                 d["External Transaction Id"]}
                             </th>
-                            <th>{d?.Date}</th>
+                            <th>
+                              {d?.Date === "-" ||
+                              d?.Date === "" ||
+                              d?.Date === " -"
+                                ? "-"
+                                : d?.Date && moment(d?.Date).format("LLL")}
+                            </th>
                             <th>{d?.Status}</th>
                             <th>{d["From Name"] && d["From Name"]}</th>
                             <th>{d["To Name"] && d["To Name"]}</th>
