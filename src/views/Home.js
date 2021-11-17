@@ -16,6 +16,8 @@ const Home = () => {
   const [items, setItems] = useState([]);
   const [internalItems, setInternalItems] = useState([]);
   const [match, setMatch] = useState([]);
+  const [macthedMOMO, setMacthedMOMO] = useState([]);
+  const [unMatchedMOMO, setUnmatchedMOMO] = useState([]);
   const [unMatch, setUnMatch] = useState([]);
   const [unPaid, setUnPaid] = useState([]);
   const [splited, setSplited] = useState([]);
@@ -128,6 +130,15 @@ const Home = () => {
     });
     setMatch(macthed);
 
+    const theMacthedMOMO = items.filter((theItem) => {
+      return internalItems.some((internalItem) => {
+        return (
+          internalItem["MoMo Ref"] && internalItem["MoMo Ref"] === theItem?.Id
+        );
+      });
+    });
+    setMacthedMOMO(theMacthedMOMO);
+
     const unmatched = internalItems.filter((internalItem) => {
       return !items.some((item) => {
         return (
@@ -146,6 +157,15 @@ const Home = () => {
         i["MoMo Ref"] !== " -"
     );
     setUnMatch(_unmatched);
+
+    const theUnmatchedMOMO = items.filter((theItem) => {
+      return !internalItems.some((internalItem) => {
+        return (
+          internalItem["MoMo Ref"] && internalItem["MoMo Ref"] === theItem?.Id
+        );
+      });
+    });
+    setUnmatchedMOMO(theUnmatchedMOMO);
 
     const theUnPaid = unmatched.filter(
       (i) =>
@@ -376,16 +396,18 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Internal */}
+
         <div className="col-md-12 col-lg-12 col-12">
           <div className="report_container">
             <div className="head">
-              <h6>Reconsile results</h6>
+              <h6>Reconsile results (Internal)</h6>
               <div>
                 <ExcelFile
                   element={
                     <Button>
                       <BiSpreadsheet />
-                      Download successfull results
+                      Download successfull results (Internal)
                     </Button>
                   }
                 >
@@ -443,7 +465,7 @@ const Home = () => {
                   element={
                     <Button>
                       <BiSpreadsheet />
-                      Download Fails
+                      Download Fails (Internal)
                     </Button>
                   }
                 >
@@ -718,6 +740,147 @@ const Home = () => {
                 </div>
               </>
             ) : null}
+          </div>
+        </div>
+
+        {/* MoMo */}
+
+        <div className="col-md-12 col-lg-12 col-12">
+          <div className="report_container">
+            <div className="head">
+              <h6>Reconsile results (MOMO) </h6>
+              <div>
+                <ExcelFile
+                  element={
+                    <Button>
+                      <BiSpreadsheet />
+                      Download successfull results (MOMO)
+                    </Button>
+                  }
+                >
+                  <ExcelSheet data={macthedMOMO} name="Matchs (MOMO)">
+                    <ExcelColumn label="ID" value="ID" />
+                    <ExcelColumn
+                      label="External Transaction Id"
+                      value="External Transaction Id"
+                    />
+                    <ExcelColumn label="Date" value="Date" />
+                    <ExcelColumn label="Status" value="Status" />
+                    <ExcelColumn label="From Name" value="From Name" />
+                    <ExcelColumn label="To Name" value="To Name" />
+                    <ExcelColumn label="Amount" value="Amount" />
+                    <ExcelColumn label="Fee" value="Fee" />
+                    <ExcelColumn label="Balance" value="Balance" />
+                    <ExcelColumn label="Currency" value="Currency" />
+                    <ExcelColumn label="Status" value="This record was found" />
+                  </ExcelSheet>
+                </ExcelFile>
+              </div>
+
+              <div>
+                <ExcelFile
+                  element={
+                    <Button>
+                      <BiSpreadsheet />
+                      Download Fails (MOMO)
+                    </Button>
+                  }
+                >
+                  <ExcelSheet data={unMatchedMOMO} name="Fails (MOMO)">
+                    <ExcelColumn label="ID" value="ID" />
+                    <ExcelColumn
+                      label="External Transaction Id"
+                      value="External Transaction Id"
+                    />
+                    <ExcelColumn label="Date" value="Date" />
+                    <ExcelColumn label="Status" value="Status" />
+                    <ExcelColumn label="From Name" value="From Name" />
+                    <ExcelColumn label="To Name" value="To Name" />
+                    <ExcelColumn label="Amount" value="Amount" />
+                    <ExcelColumn label="Fee" value="Fee" />
+                    <ExcelColumn label="Balance" value="Balance" />
+                    <ExcelColumn label="Currency" value="Currency" />
+                    <ExcelColumn label="Status" value="This record was found" />
+                  </ExcelSheet>
+                </ExcelFile>
+              </div>
+              <div className="mb-5">
+                <h5 className="white">Total records ({items.length})</h5>
+                <h5 className="green">Matchs: {macthedMOMO.length}</h5>
+
+                <h5 className="red">Fails: {unMatchedMOMO.length}</h5>
+              </div>
+            </div>
+
+            <div className="green_res_container">
+              <table className="table container">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">External Transaction Id</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">From Name</th>
+                    <th scope="col">To Name</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Fee</th>
+                    <th scope="col">Balance</th>
+                    <th scope="col">Currency</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {macthedMOMO.map((d) => (
+                    <tr key={d?.Id}>
+                      <th>{d?.Id}</th>
+                      <th>
+                        {d["External Transaction Id"] &&
+                          d["External Transaction Id"]}
+                      </th>
+                      <th>
+                        {d?.Date === "-" || d?.Date === "" || d?.Date === " -"
+                          ? "-"
+                          : d?.Date && moment(d?.Date).format("LLL")}
+                      </th>
+                      <th>{d?.Status}</th>
+                      <th>{d["From Name"] && d["From Name"]}</th>
+                      <th>{d["To Name"] && d["To Name"]}</th>
+                      <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
+                      <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
+                      <th>{d?.Balance && numberWithCommas(d?.Balance)}</th>
+                      <th>{d?.Currency}</th>
+                      <th>
+                        <BsCheckAll className="green" />
+                      </th>
+                    </tr>
+                  ))}
+                  {unMatchedMOMO.map((d) => (
+                    <tr key={d?.Id}>
+                      <th>{d?.Id}</th>
+                      <th>
+                        {d["External Transaction Id"] &&
+                          d["External Transaction Id"]}
+                      </th>
+                      <th>
+                        {d?.Date === "-" || d?.Date === "" || d?.Date === " -"
+                          ? "-"
+                          : d?.Date && moment(d?.Date).format("LLL")}
+                      </th>
+                      <th>{d?.Status}</th>
+                      <th>{d["From Name"] && d["From Name"]}</th>
+                      <th>{d["To Name"] && d["To Name"]}</th>
+                      <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
+                      <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
+                      <th>{d?.Balance && numberWithCommas(d?.Balance)}</th>
+                      <th>{d?.Currency}</th>
+                      <th>
+                        <VscError className="red" />
+                      </th>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
