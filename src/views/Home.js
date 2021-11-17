@@ -759,7 +759,7 @@ const Home = () => {
                   }
                 >
                   <ExcelSheet data={macthedMOMO} name="Matchs (MOMO)">
-                    <ExcelColumn label="ID" value="ID" />
+                    <ExcelColumn label="ID" value="Id" />
                     <ExcelColumn
                       label="External Transaction Id"
                       value="External Transaction Id"
@@ -787,7 +787,7 @@ const Home = () => {
                   }
                 >
                   <ExcelSheet data={unMatchedMOMO} name="Fails (MOMO)">
-                    <ExcelColumn label="ID" value="ID" />
+                    <ExcelColumn label="ID" value="Id" />
                     <ExcelColumn
                       label="External Transaction Id"
                       value="External Transaction Id"
