@@ -18,6 +18,7 @@ const Home = () => {
   const [match, setMatch] = useState([]);
   const [unMatch, setUnMatch] = useState([]);
   const [unPaid, setUnPaid] = useState([]);
+  const [splited, setSplited] = useState([]);
   const [manyRefData, setManyRefData] = useState([]);
   const [manyRefDataNotFound, setManyRefDataNotFound] = useState([]);
   const withManyRefs = [];
@@ -164,6 +165,8 @@ const Home = () => {
       const _split = split.split(",");
       return _split;
     });
+
+    setSplited(splited);
 
     splited.forEach((item) => {
       return item.forEach((item2) => {
@@ -435,15 +438,15 @@ const Home = () => {
                 </ExcelFile>
               </div>
               <div className="mb-5">
+                <h5 className="white">
+                  Total records ({internalItems.length})
+                </h5>
                 <h5 className="green">
-                  Matchs: {match.length + manyRefData.length}{" "}
+                  Matchs: {match.length} + {splited.length} Ref IDs{" "}
                 </h5>
-                <h5 className="red">
-                  {/* UnMatchs:{" "}
-                  {manyRefData.length !== 0
-                    ? unMatch.length - manyRefDataNotFound.length
-                    : unMatch.length} */}
-                </h5>
+                <h5 className="yellow">Not paid: {unPaid.length}</h5>
+
+                <h5 className="red">Fails: {unMatch.length}</h5>
               </div>
             </div>
 

@@ -48,6 +48,9 @@ body {
 .red {
   color: red;
 }
+.yellow {
+  color: rgb(231, 231, 124);
+}
 
 .green-bg {
   background: green;
