@@ -17,6 +17,7 @@ const Home = () => {
   const [internalItems, setInternalItems] = useState([]);
   const [match, setMatch] = useState([]);
   const [unMatch, setUnMatch] = useState([]);
+  const [unPaid, setUnPaid] = useState([]);
   const [manyRefData, setManyRefData] = useState([]);
   const [manyRefDataNotFound, setManyRefDataNotFound] = useState([]);
   const withManyRefs = [];
@@ -135,9 +136,26 @@ const Home = () => {
     });
 
     const _unmatched = unmatched.filter(
-      (i) => typeof i["MoMo Ref"] !== "string"
+      (i) =>
+        typeof i["MoMo Ref"] !== "string" &&
+        i["MoMo Ref"] !== undefined &&
+        i["MoMo Ref"] !== null &&
+        i["MoMo Ref"] !== "" &&
+        i["MoMo Ref"] !== "-" &&
+        i["MoMo Ref"] !== " -"
     );
     setUnMatch(_unmatched);
+
+    const theUnPaid = unmatched.filter(
+      (i) =>
+        typeof i["MoMo Ref"] !== "string" ||
+        i["MoMo Ref"] === undefined ||
+        i["MoMo Ref"] === null ||
+        i["MoMo Ref"] === "" ||
+        i["MoMo Ref"] === "-" ||
+        i["MoMo Ref"] === " -"
+    );
+    setUnPaid(theUnPaid);
 
     const withTwo = unmatched.filter((i) => typeof i["MoMo Ref"] === "string");
 
@@ -533,6 +551,48 @@ const Home = () => {
                       <th>
                         <VscError className="red" />
                       </th>
+                    </tr>
+                  ))}
+
+                  {unPaid.map((d) => (
+                    <tr key={d["MoMo Ref"] && d["Order Date"]}>
+                      <th>
+                        {d["Order Date"] === "-" ||
+                        d["Order Date"] === "" ||
+                        d["Order Date"] === " -"
+                          ? "-"
+                          : d["Order Date"] &&
+                            moment(d["Order Date"]).format("LLL")}
+                      </th>
+                      <th>{d?.Depot}</th>
+                      <th>{d["Client names"] && d["Client names"]}</th>
+                      <th>
+                        {d["Order value"] && numberWithCommas(d["Order value"])}
+                      </th>
+                      <th>
+                        {d["Paid Amount"] && numberWithCommas(d["Paid Amount"])}
+                      </th>
+                      <th>
+                        {d["Unpaid Amount"] &&
+                          numberWithCommas(d["Unpaid Amount"])}
+                      </th>
+                      <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
+
+                      <th>
+                        {d["Paid date"] === "-" ||
+                        d["Paid date"] === "" ||
+                        d["Paid date"] === " -"
+                          ? "-"
+                          : d["Paid date"] &&
+                            moment(d["Paid date"]).format("LLL")}
+                      </th>
+                      <th>{d["Truck used"] && d["Truck used"]}</th>
+                      <th>{d["TIN Number"] && d["TIN Number"]}</th>
+                      <th>
+                        {d["EBM Processed: Yes/No"] &&
+                          d["EBM Processed: Yes/No"]}
+                      </th>
+                      <th className="red">Not paid</th>
                     </tr>
                   ))}
                 </tbody>
