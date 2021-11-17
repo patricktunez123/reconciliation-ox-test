@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "antd";
-import ReactExport from "react-export-excel";
+import ReactExport from "react-data-export";
 import moment from "moment";
 import * as XLSX from "xlsx";
 import { BsCheckAll } from "react-icons/bs";
@@ -409,11 +409,11 @@ const Home = () => {
                   element={
                     <Button>
                       <BiSpreadsheet />
-                      Download successfull results (Internal)
+                      Download All (Internal)
                     </Button>
                   }
                 >
-                  <ExcelSheet data={match} name="Matchs">
+                  <ExcelSheet data={match} name="Matchs (Internals)">
                     <ExcelColumn label="Order Date" value="Order Date" />
                     <ExcelColumn label="Depot" value="Depot" />
                     <ExcelColumn label="Client names" value="Client names" />
@@ -428,7 +428,31 @@ const Home = () => {
                       label="EBM Processed: Yes/No"
                       value="EBM Processed: Yes/No"
                     />
-                    <ExcelColumn label="Status" value="This record was found" />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col["MoMo Ref"] ? "Match found" : null)}
+                    />
+                  </ExcelSheet>
+
+                  <ExcelSheet data={unMatch} name="Fails">
+                    <ExcelColumn label="Order Date" value="Order Date" />
+                    <ExcelColumn label="Depot" value="Depot" />
+                    <ExcelColumn label="Client names" value="Client names" />
+                    <ExcelColumn label="Order value" value="Order value" />
+                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
+                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
+                    <ExcelColumn label="Paid date" value="Paid date" />
+                    <ExcelColumn label="Truck used" value="Truck used" />
+                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn
+                      label="EBM Processed: Yes/No"
+                      value="EBM Processed: Yes/No"
+                    />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col["MoMo Ref"] ? "Not found" : null)}
+                    />
                   </ExcelSheet>
                 </ExcelFile>
               </div>
