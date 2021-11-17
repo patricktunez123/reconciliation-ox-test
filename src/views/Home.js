@@ -409,7 +409,7 @@ const Home = () => {
                   element={
                     <Button>
                       <BiSpreadsheet />
-                      Download All (Internal)
+                      Download successfull results (Internal)
                     </Button>
                   }
                 >
@@ -431,27 +431,6 @@ const Home = () => {
                     <ExcelColumn
                       label="Status"
                       value={(col) => (col["MoMo Ref"] ? "Match found" : null)}
-                    />
-                  </ExcelSheet>
-
-                  <ExcelSheet data={unMatch} name="Fails">
-                    <ExcelColumn label="Order Date" value="Order Date" />
-                    <ExcelColumn label="Depot" value="Depot" />
-                    <ExcelColumn label="Client names" value="Client names" />
-                    <ExcelColumn label="Order value" value="Order value" />
-                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
-                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
-                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
-                    <ExcelColumn label="Paid date" value="Paid date" />
-                    <ExcelColumn label="Truck used" value="Truck used" />
-                    <ExcelColumn label="TIN Number" value="TIN Number" />
-                    <ExcelColumn
-                      label="EBM Processed: Yes/No"
-                      value="EBM Processed: Yes/No"
-                    />
-                    <ExcelColumn
-                      label="Status"
-                      value={(col) => (col["MoMo Ref"] ? "Not found" : null)}
                     />
                   </ExcelSheet>
                 </ExcelFile>
@@ -481,7 +460,10 @@ const Home = () => {
                       label="EBM Processed: Yes/No"
                       value="EBM Processed: Yes/No"
                     />
-                    <ExcelColumn label="Status" value="This record was found" />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col?.Depot ? "Not paid" : null)}
+                    />
                   </ExcelSheet>
                 </ExcelFile>
               </div>
@@ -510,7 +492,10 @@ const Home = () => {
                       label="EBM Processed: Yes/No"
                       value="EBM Processed: Yes/No"
                     />
-                    <ExcelColumn label="Status" value="This record was found" />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col?.Depot ? "No match" : null)}
+                    />
                   </ExcelSheet>
                 </ExcelFile>
               </div>
@@ -798,7 +783,10 @@ const Home = () => {
                     <ExcelColumn label="Fee" value="Fee" />
                     <ExcelColumn label="Balance" value="Balance" />
                     <ExcelColumn label="Currency" value="Currency" />
-                    <ExcelColumn label="Status" value="This record was found" />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col?.Id ? "Match found" : null)}
+                    />
                   </ExcelSheet>
                 </ExcelFile>
               </div>
@@ -826,7 +814,10 @@ const Home = () => {
                     <ExcelColumn label="Fee" value="Fee" />
                     <ExcelColumn label="Balance" value="Balance" />
                     <ExcelColumn label="Currency" value="Currency" />
-                    <ExcelColumn label="Status" value="This record was found" />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col?.Id ? "No match" : null)}
+                    />
                   </ExcelSheet>
                 </ExcelFile>
               </div>
