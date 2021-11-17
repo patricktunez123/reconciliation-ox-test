@@ -45,7 +45,8 @@ const Home = () => {
     });
 
     promise.then((data) => {
-      setItems(data);
+      const _data = data.filter((item) => item?.Id);
+      setItems(_data);
     });
   };
 
@@ -68,7 +69,8 @@ const Home = () => {
     });
 
     promise.then((data) => {
-      setItems(data);
+      const _data = data.filter((item) => item.Id);
+      setItems(_data);
     });
   };
 
