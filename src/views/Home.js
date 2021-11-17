@@ -414,6 +414,35 @@ const Home = () => {
                   element={
                     <Button>
                       <BiSpreadsheet />
+                      Download unpaid records
+                    </Button>
+                  }
+                >
+                  <ExcelSheet data={unPaid} name="Unpaid records">
+                    <ExcelColumn label="Order Date" value="Order Date" />
+                    <ExcelColumn label="Depot" value="Depot" />
+                    <ExcelColumn label="Client names" value="Client names" />
+                    <ExcelColumn label="Order value" value="Order value" />
+                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
+                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
+                    <ExcelColumn label="Paid date" value="Paid date" />
+                    <ExcelColumn label="Truck used" value="Truck used" />
+                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn
+                      label="EBM Processed: Yes/No"
+                      value="EBM Processed: Yes/No"
+                    />
+                    <ExcelColumn label="Status" value="This record was found" />
+                  </ExcelSheet>
+                </ExcelFile>
+              </div>
+
+              <div>
+                <ExcelFile
+                  element={
+                    <Button>
+                      <BiSpreadsheet />
                       Download Fails
                     </Button>
                   }
