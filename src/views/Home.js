@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "antd";
 import ReactExport from "react-data-export";
-import moment from "moment";
 import * as XLSX from "xlsx";
 import { BsCheckAll } from "react-icons/bs";
 import { VscError } from "react-icons/vsc";
@@ -26,17 +25,129 @@ const Home = () => {
   const withManyRefs = [];
   const withManyRefsNotFount = [];
 
+  const basedate = new Date(1899, 11, 30, 0, 0, 0);
+  const dnthresh =
+    basedate.getTime() +
+    (new Date().getTimezoneOffset() - basedate.getTimezoneOffset()) * 60000;
+  const day_ms = 24 * 60 * 60 * 1000;
+  const days_1462_ms = 1462 * day_ms;
+
+  function datenum(v, date1904) {
+    let epoch = v.getTime();
+    if (date1904) {
+      epoch -= days_1462_ms;
+    }
+    return (epoch - dnthresh) / day_ms;
+  }
+
+  function fixImportedDate(date, is_date1904) {
+    // This is to Convert JS Date back to Excel date code and parse them using THE SSF module.
+    const parsed = XLSX.SSF.parse_date_code(datenum(date, false), {
+      date1904: is_date1904,
+    });
+    return `${parsed.y}-${parsed.m}-${parsed.d}`;
+  }
+
   const readMoMoExcel = (file) => {
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(file);
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-        const wb = XLSX.read(bufferArray, { type: "buffer", cellDates: true });
+        const wb = XLSX.readFile(bufferArray, {
+          type: "buffer",
+          cellDates: true,
+        });
         const wsname = wb.SheetNames[1];
         const ws = wb.Sheets[wsname];
-        const data = XLSX.utils.sheet_to_json(ws);
-        resolve(data);
+        const converted = XLSX.utils.sheet_to_json(ws, {
+          header: 1,
+          cellDates: true,
+        });
+
+        //Fix dates arror(it was substracting one from the orginal date)
+        const is_date1904 = wb.Workbook.WBProps.date1904;
+        const fixed = converted.map((arr) =>
+          arr.map((v) => {
+            if (v instanceof Date) {
+              return fixImportedDate(v, is_date1904);
+            } else {
+              return v;
+            }
+          })
+        );
+
+        //convert an array of arrays into an array of objects
+        const _fixed = fixed.map(
+          ([
+            Id,
+            ExternalTransactionId,
+            Date,
+            Status,
+            Type,
+            ProviderCategory,
+            Information,
+            NoteMessage,
+            From,
+            FromName,
+            FromHandlerName,
+            To,
+            ToName,
+            ToHandlerName,
+            InitiatedBy,
+            OnBehalfOf,
+            Amount,
+            Currency1,
+            ExternalAmount,
+            Currency2,
+            ExternalFXRate,
+            ExternalServiceProvider,
+            Fee,
+            Currency3,
+            Discount,
+            Currency4,
+            Promotion,
+            Currency5,
+            Coupon,
+            Currency6,
+            Balance,
+            Currency,
+          ]) => ({
+            Id,
+            ExternalTransactionId,
+            Date,
+            Status,
+            Type,
+            ProviderCategory,
+            Information,
+            NoteMessage,
+            From,
+            FromName,
+            FromHandlerName,
+            To,
+            ToName,
+            ToHandlerName,
+            InitiatedBy,
+            OnBehalfOf,
+            Amount,
+            Currency1,
+            ExternalAmount,
+            Currency2,
+            ExternalFXRate,
+            ExternalServiceProvider,
+            Fee,
+            Currency3,
+            Discount,
+            Currency4,
+            Promotion,
+            Currency5,
+            Coupon,
+            Currency6,
+            Balance,
+            Currency,
+          })
+        );
+        resolve(_fixed);
       };
 
       fileReader.onerror = (error) => {
@@ -45,7 +156,7 @@ const Home = () => {
     });
 
     promise.then((data) => {
-      const _data = data.filter((item) => item?.Id);
+      const _data = data.filter((item) => item.Id !== "Id" && item.Id);
       setItems(_data);
     });
   };
@@ -56,11 +167,73 @@ const Home = () => {
       fileReader.readAsArrayBuffer(file);
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-        const wb = XLSX.read(bufferArray, { type: "buffer", cellDates: true });
+        const wb = XLSX.readFile(bufferArray, {
+          type: "buffer",
+          cellDates: true,
+        });
         const wsname = wb.SheetNames[2];
         const ws = wb.Sheets[wsname];
-        const data = XLSX.utils.sheet_to_json(ws);
-        resolve(data);
+        const converted = XLSX.utils.sheet_to_json(ws, {
+          header: 1,
+          cellDates: true,
+        });
+
+        //Fix dates arror(it was substracting one from the orginal date)
+        const is_date1904 = wb.Workbook.WBProps.date1904;
+        const fixed = converted.map((arr) =>
+          arr.map((v) => {
+            if (v instanceof Date) {
+              return fixImportedDate(v, is_date1904);
+            } else {
+              return v;
+            }
+          })
+        );
+
+        //convert an array of arrays into an array of objects
+        const _fixed = fixed.map(
+          ([
+            Id,
+            ExternalTransactionId,
+            Date,
+            Status,
+            Type,
+            ProviderCategory,
+            Information,
+            NoteMessage,
+            From,
+            FromName,
+            FromHandlerName,
+            To,
+            ToName,
+            Amount,
+            Fee,
+            Currency1,
+            Balance,
+            Currency,
+          ]) => ({
+            Id,
+            ExternalTransactionId,
+            Date,
+            Status,
+            Type,
+            ProviderCategory,
+            Information,
+            NoteMessage,
+            From,
+            FromName,
+            FromHandlerName,
+            To,
+            ToName,
+            Amount,
+            Fee,
+            Currency1,
+            Balance,
+            Currency,
+          })
+        );
+
+        resolve(_fixed);
       };
 
       fileReader.onerror = (error) => {
@@ -69,7 +242,7 @@ const Home = () => {
     });
 
     promise.then((data) => {
-      const _data = data.filter((item) => item.Id);
+      const _data = data.filter((item) => item.Id !== "Id" && item.Id);
       setItems(_data);
     });
   };
@@ -80,11 +253,58 @@ const Home = () => {
       fileReader.readAsArrayBuffer(file);
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-        const wb = XLSX.read(bufferArray, { type: "buffer", cellDates: true });
+        const wb = XLSX.readFile(bufferArray, {
+          type: "buffer",
+          cellDates: true,
+        });
         const wsname = wb.SheetNames[3];
         const ws = wb.Sheets[wsname];
-        const data = XLSX.utils.sheet_to_json(ws);
-        resolve(data);
+        const converted = XLSX.utils.sheet_to_json(ws, {
+          header: 1,
+          cellDates: true,
+        });
+
+        //Fix dates arror(it was substracting one from the orginal date)
+        const is_date1904 = wb.Workbook.WBProps.date1904;
+        const fixed = converted.map((arr) =>
+          arr.map((v) => {
+            if (v instanceof Date) {
+              return fixImportedDate(v, is_date1904);
+            } else {
+              return v;
+            }
+          })
+        );
+
+        //convert an array of arrays into an array of objects
+        const _fixed = fixed.map(
+          ([
+            OrderDate,
+            Depot,
+            ClientNames,
+            OrderValue,
+            PaidAmount,
+            UnpaidAmount,
+            MoMoRef,
+            PaidDate,
+            TruckUsed,
+            TINNumber,
+            EBMProcessed,
+          ]) => ({
+            OrderDate,
+            Depot,
+            ClientNames,
+            OrderValue,
+            PaidAmount,
+            UnpaidAmount,
+            MoMoRef,
+            PaidDate,
+            TruckUsed,
+            TINNumber,
+            EBMProcessed,
+          })
+        );
+        resolve(_fixed);
       };
 
       fileReader.onerror = (error) => {
@@ -104,11 +324,59 @@ const Home = () => {
       fileReader.readAsArrayBuffer(file);
       fileReader.onload = (e) => {
         const bufferArray = e.target.result;
-        const wb = XLSX.read(bufferArray, { type: "buffer", cellDates: true });
+        const wb = XLSX.readFile(bufferArray, {
+          type: "buffer",
+          cellDates: true,
+        });
         const wsname = wb.SheetNames[3];
         const ws = wb.Sheets[wsname];
-        const data = XLSX.utils.sheet_to_json(ws);
-        resolve(data);
+        const converted = XLSX.utils.sheet_to_json(ws, {
+          header: 1,
+          cellDates: true,
+        });
+
+        //Fix dates arror(it was substracting one from the orginal date)
+        const is_date1904 = wb.Workbook.WBProps.date1904;
+        const fixed = converted.map((arr) =>
+          arr.map((v) => {
+            if (v instanceof Date) {
+              return fixImportedDate(v, is_date1904);
+            } else {
+              return v;
+            }
+          })
+        );
+
+        //convert an array of arrays into an array of objects
+        const _fixed = fixed.map(
+          ([
+            OrderDate,
+            Depot,
+            ClientNames,
+            OrderValue,
+            PaidAmount,
+            UnpaidAmount,
+            MoMoRef,
+            PaidDate,
+            TruckUsed,
+            TINNumber,
+            EBMProcessed,
+          ]) => ({
+            OrderDate,
+            Depot,
+            ClientNames,
+            OrderValue,
+            PaidAmount,
+            UnpaidAmount,
+            MoMoRef,
+            PaidDate,
+            TruckUsed,
+            TINNumber,
+            EBMProcessed,
+          })
+        );
+
+        resolve(_fixed);
       };
 
       fileReader.onerror = (error) => {
@@ -125,65 +393,57 @@ const Home = () => {
   const handleReconcile = () => {
     const macthed = internalItems.filter((internalItem) => {
       return items.some((item) => {
-        return (
-          internalItem["MoMo Ref"] && internalItem["MoMo Ref"] === item?.Id
-        );
+        return internalItem?.MoMoRef === item?.Id;
       });
     });
     setMatch(macthed);
 
     const theMacthedMOMO = items.filter((theItem) => {
       return internalItems.some((internalItem) => {
-        return (
-          internalItem["MoMo Ref"] && internalItem["MoMo Ref"] === theItem?.Id
-        );
+        return internalItem?.MoMoRef === theItem?.Id;
       });
     });
     setMacthedMOMO(theMacthedMOMO);
 
     const unmatched = internalItems.filter((internalItem) => {
       return !items.some((item) => {
-        return (
-          internalItem["MoMo Ref"] && internalItem["MoMo Ref"] === item?.Id
-        );
+        return internalItem?.MoMoRef === item?.Id;
       });
     });
 
     const _unmatched = unmatched.filter(
       (i) =>
-        typeof i["MoMo Ref"] !== "string" &&
-        i["MoMo Ref"] !== undefined &&
-        i["MoMo Ref"] !== null &&
-        i["MoMo Ref"] !== "" &&
-        i["MoMo Ref"] !== "-" &&
-        i["MoMo Ref"] !== " -"
+        typeof i?.MoMoRef !== "string" &&
+        i?.MoMoRef !== undefined &&
+        i?.MoMoRef !== null &&
+        i?.MoMoRef !== "" &&
+        i?.MoMoRef !== "-" &&
+        i?.MoMoRef !== " -"
     );
     setUnMatch(_unmatched);
 
     const theUnmatchedMOMO = items.filter((theItem) => {
       return !internalItems.some((internalItem) => {
-        return (
-          internalItem["MoMo Ref"] && internalItem["MoMo Ref"] === theItem?.Id
-        );
+        return internalItem?.MoMoRef === theItem?.Id;
       });
     });
     setUnmatchedMOMO(theUnmatchedMOMO);
 
     const theUnPaid = unmatched.filter(
       (i) =>
-        typeof i["MoMo Ref"] !== "string" ||
-        i["MoMo Ref"] === undefined ||
-        i["MoMo Ref"] === null ||
-        i["MoMo Ref"] === "" ||
-        i["MoMo Ref"] === "-" ||
-        i["MoMo Ref"] === " -"
+        typeof i?.MoMoRef !== "string" ||
+        i?.MoMoRef === undefined ||
+        i?.MoMoRef === null ||
+        i?.MoMoRef === "" ||
+        i?.MoMoRef === "-" ||
+        i?.MoMoRef === " -"
     );
     setUnPaid(theUnPaid);
 
-    const withTwo = unmatched.filter((i) => typeof i["MoMo Ref"] === "string");
+    const withTwo = unmatched.filter((i) => typeof i?.MoMoRef === "string");
 
     const splited = withTwo?.map((i) => {
-      const split = i["MoMo Ref"]?.split(" ")?.join("");
+      const split = i?.MoMoRef?.split(" ")?.join("");
       const _split = split.split(",");
       return _split;
     });
@@ -260,13 +520,13 @@ const Home = () => {
                     <th scope="col">External Transaction Id</th>
                     <th scope="col">Date</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Type</th>
                     <th scope="col">From Name</th>
                     <th scope="col">To Name</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Fee</th>
                     <th scope="col">Balance</th>
                     <th scope="col">Currency</th>
-                    <th scope="col"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -274,24 +534,23 @@ const Home = () => {
                     ? items.map((d) => (
                         <tr key={d?.Id}>
                           <th>{d?.Id}</th>
-                          <th>
-                            {d["External Transaction Id"] &&
-                              d["External Transaction Id"]}
-                          </th>
+                          <th>{d?.ExternalTransactionId}</th>
                           <th>
                             {d?.Date === "-" ||
                             d?.Date === "" ||
                             d?.Date === " -"
                               ? "-"
-                              : d?.Date &&
-                                moment(d?.Date).format().split("", 10)}
+                              : d?.Date}
                           </th>
                           <th>{d?.Status}</th>
-                          <th>{d["From Name"] && d["From Name"]}</th>
-                          <th>{d["To Name"] && d["To Name"]}</th>
+                          <th>{d?.Type}</th>
+                          <th>{d?.FromName}</th>
+                          <th>{d?.ToName}</th>
                           <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
-                          <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
-                          <th>{d?.Balance && numberWithCommas(d?.Balance)}</th>
+                          <th>{d?.Fee ? numberWithCommas(d?.Fee) : "-"}</th>
+                          <th>
+                            {d?.Balance ? numberWithCommas(d?.Balance) : "-"}
+                          </th>
                           <th>{d?.Currency}</th>
                         </tr>
                       ))
@@ -351,45 +610,38 @@ const Home = () => {
                 <tbody>
                   {match.length === 0
                     ? internalItems.map((d) => (
-                        <tr key={d["MoMo Ref"] && d["MoMo Ref"]}>
+                        <tr key={d?.MoMoRef}>
                           <th>
-                            {d["Order Date"] === "-" ||
-                            d["Order Date"] === "" ||
-                            d["Order Date"] === " -"
+                            {d?.OrderDate === "-" ||
+                            d?.OrderDate === "" ||
+                            d?.OrderDate === " -"
                               ? "-"
-                              : d["Order Date"] &&
-                                moment(d["Order Date"]).format().split("", 10)}
+                              : d?.OrderDate}
                           </th>
                           <th>{d?.Depot}</th>
-                          <th>{d["Client names"] && d["Client names"]}</th>
+                          <th>{d?.ClientNames}</th>
                           <th>
-                            {d["Order value"] &&
-                              numberWithCommas(d["Order value"])}
+                            {d?.OrderValue && numberWithCommas(d?.OrderValue)}
                           </th>
                           <th>
-                            {d["Paid Amount"] &&
-                              numberWithCommas(d["Paid Amount"])}
+                            {d?.PaidAmount && numberWithCommas(d?.PaidAmount)}
                           </th>
                           <th>
-                            {d["Unpaid Amount"] &&
-                              numberWithCommas(d["Unpaid Amount"])}
+                            {d?.UnpaidAmount &&
+                              numberWithCommas(d?.UnpaidAmount)}
                           </th>
-                          <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
+                          <th>{d?.MoMoRef}</th>
 
                           <th>
-                            {d["Paid date"] === "-" ||
-                            d["Paid date"] === "" ||
-                            d["Paid date"] === " -"
+                            {d?.PaidDate === "-" ||
+                            d?.PaidDate === "" ||
+                            d?.PaidDate === " -"
                               ? "-"
-                              : d["Paid date"] &&
-                                moment(d["Paid date"]).format().split("", 10)}
+                              : d?.PaidDate}
                           </th>
-                          <th>{d["Truck used"] && d["Truck used"]}</th>
-                          <th>{d["TIN Number"] && d["TIN Number"]}</th>
-                          <th>
-                            {d["EBM Processed: Yes/No"] &&
-                              d["EBM Processed: Yes/No"]}
-                          </th>
+                          <th>{d?.TruckUsed}</th>
+                          <th>{d?.TINNumber}</th>
+                          <th>{d?.EBMProcessed}</th>
                         </tr>
                       ))
                     : null}
@@ -415,40 +667,40 @@ const Home = () => {
                   }
                 >
                   <ExcelSheet data={match} name="Matchs (Internal)">
-                    <ExcelColumn label="Order Date" value="Order Date" />
+                    <ExcelColumn label="Order Date" value="OrderDate" />
                     <ExcelColumn label="Depot" value="Depot" />
-                    <ExcelColumn label="Client names" value="Client names" />
-                    <ExcelColumn label="Order value" value="Order value" />
-                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
-                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
-                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
-                    <ExcelColumn label="Paid date" value="Paid date" />
-                    <ExcelColumn label="Truck used" value="Truck used" />
-                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn label="Client names" value="ClientNames" />
+                    <ExcelColumn label="Order value" value="OrderValue" />
+                    <ExcelColumn label="Paid Amount" value="PaidAmount" />
+                    <ExcelColumn label="Unpaid Amount" value="UnpaidAmount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMoRef" />
+                    <ExcelColumn label="Paid date" value="PaidDate" />
+                    <ExcelColumn label="Truck used" value="TruckUsed" />
+                    <ExcelColumn label="TIN Number" value="TINNumber" />
                     <ExcelColumn
                       label="EBM Processed: Yes/No"
-                      value="EBM Processed: Yes/No"
+                      value="EBMProcessed"
                     />
                     <ExcelColumn
                       label="Status"
-                      value={(col) => (col["MoMo Ref"] ? "Match found" : null)}
+                      value={(col) => (col?.MoMoRef ? "Match found" : null)}
                     />
                   </ExcelSheet>
 
                   <ExcelSheet data={unMatch} name="Fails (Internal)">
-                    <ExcelColumn label="Order Date" value="Order Date" />
+                    <ExcelColumn label="Order Date" value="OrderDate" />
                     <ExcelColumn label="Depot" value="Depot" />
-                    <ExcelColumn label="Client names" value="Client names" />
-                    <ExcelColumn label="Order value" value="Order value" />
-                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
-                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
-                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
-                    <ExcelColumn label="Paid date" value="Paid date" />
-                    <ExcelColumn label="Truck used" value="Truck used" />
-                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn label="Client names" value="ClientNames" />
+                    <ExcelColumn label="Order value" value="OrderValue" />
+                    <ExcelColumn label="Paid Amount" value="PaidAmount" />
+                    <ExcelColumn label="Unpaid Amount" value="UnpaidAmount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMoRef" />
+                    <ExcelColumn label="Paid date" value="PaidDate" />
+                    <ExcelColumn label="Truck used" value="TruckUsed" />
+                    <ExcelColumn label="TIN Number" value="TINNumber" />
                     <ExcelColumn
                       label="EBM Processed: Yes/No"
-                      value="EBM Processed: Yes/No"
+                      value="EBMProcessed"
                     />
                     <ExcelColumn
                       label="Status"
@@ -456,24 +708,29 @@ const Home = () => {
                     />
                   </ExcelSheet>
 
-                  <ExcelSheet data={unPaid} name="Unpaid records(Internal)">
-                    <ExcelColumn label="Order Date" value="Order Date" />
+                  <ExcelSheet
+                    data={unPaid}
+                    name="Records with no ref ids(Internal)"
+                  >
+                    <ExcelColumn label="Order Date" value="OrderDate" />
                     <ExcelColumn label="Depot" value="Depot" />
-                    <ExcelColumn label="Client names" value="Client names" />
-                    <ExcelColumn label="Order value" value="Order value" />
-                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
-                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
-                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
-                    <ExcelColumn label="Paid date" value="Paid date" />
-                    <ExcelColumn label="Truck used" value="Truck used" />
-                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn label="Client names" value="ClientNames" />
+                    <ExcelColumn label="Order value" value="OrderValue" />
+                    <ExcelColumn label="Paid Amount" value="PaidAmount" />
+                    <ExcelColumn label="Unpaid Amount" value="UnpaidAmount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMoRef" />
+                    <ExcelColumn label="Paid date" value="PaidDate" />
+                    <ExcelColumn label="Truck used" value="TruckUsed" />
+                    <ExcelColumn label="TIN Number" value="TINNumber" />
                     <ExcelColumn
                       label="EBM Processed: Yes/No"
-                      value="EBM Processed: Yes/No"
+                      value="EBMProcessed"
                     />
                     <ExcelColumn
                       label="Status"
-                      value={(col) => (col?.Depot ? "Not paid" : null)}
+                      value={(col) =>
+                        col?.Depot ? "Does not have ref id" : null
+                      }
                     />
                   </ExcelSheet>
                 </ExcelFile>
@@ -489,23 +746,23 @@ const Home = () => {
                   }
                 >
                   <ExcelSheet data={match} name="Matchs (Internals)">
-                    <ExcelColumn label="Order Date" value="Order Date" />
+                    <ExcelColumn label="Order Date" value="OrderDate" />
                     <ExcelColumn label="Depot" value="Depot" />
-                    <ExcelColumn label="Client names" value="Client names" />
-                    <ExcelColumn label="Order value" value="Order value" />
-                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
-                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
-                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
-                    <ExcelColumn label="Paid date" value="Paid date" />
-                    <ExcelColumn label="Truck used" value="Truck used" />
-                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn label="Client names" value="ClientNames" />
+                    <ExcelColumn label="Order value" value="OrderValue" />
+                    <ExcelColumn label="Paid Amount" value="PaidAmount" />
+                    <ExcelColumn label="Unpaid Amount" value="UnpaidAmount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMoRef" />
+                    <ExcelColumn label="Paid date" value="PaidDate" />
+                    <ExcelColumn label="Truck used" value="TruckUsed" />
+                    <ExcelColumn label="TIN Number" value="TINNumber" />
                     <ExcelColumn
                       label="EBM Processed: Yes/No"
-                      value="EBM Processed: Yes/No"
+                      value="EBMProcessed"
                     />
                     <ExcelColumn
                       label="Status"
-                      value={(col) => (col["MoMo Ref"] ? "Match found" : null)}
+                      value={(col) => (col?.MoMoRef ? "Match found" : null)}
                     />
                   </ExcelSheet>
                 </ExcelFile>
@@ -516,28 +773,30 @@ const Home = () => {
                   element={
                     <Button>
                       <BiSpreadsheet />
-                      Download unpaid records
+                      Download records with no refs
                     </Button>
                   }
                 >
-                  <ExcelSheet data={unPaid} name="Unpaid records">
-                    <ExcelColumn label="Order Date" value="Order Date" />
+                  <ExcelSheet data={unPaid} name="Records with no refs">
+                    <ExcelColumn label="Order Date" value="OrderDate" />
                     <ExcelColumn label="Depot" value="Depot" />
-                    <ExcelColumn label="Client names" value="Client names" />
-                    <ExcelColumn label="Order value" value="Order value" />
-                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
-                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
-                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
-                    <ExcelColumn label="Paid date" value="Paid date" />
-                    <ExcelColumn label="Truck used" value="Truck used" />
-                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn label="Client names" value="ClientNames" />
+                    <ExcelColumn label="Order value" value="OrderValue" />
+                    <ExcelColumn label="Paid Amount" value="PaidAmount" />
+                    <ExcelColumn label="Unpaid Amount" value="UnpaidAmount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMoRef" />
+                    <ExcelColumn label="Paid date" value="PaidDate" />
+                    <ExcelColumn label="Truck used" value="TruckUsed" />
+                    <ExcelColumn label="TIN Number" value="TINNumber" />
                     <ExcelColumn
                       label="EBM Processed: Yes/No"
-                      value="EBM Processed: Yes/No"
+                      value="EBMProcessed"
                     />
                     <ExcelColumn
                       label="Status"
-                      value={(col) => (col?.Depot ? "Not paid" : null)}
+                      value={(col) =>
+                        col?.Depot ? "Does not have ref id" : null
+                      }
                     />
                   </ExcelSheet>
                 </ExcelFile>
@@ -553,19 +812,19 @@ const Home = () => {
                   }
                 >
                   <ExcelSheet data={unMatch} name="Fails">
-                    <ExcelColumn label="Order Date" value="Order Date" />
+                    <ExcelColumn label="Order Date" value="OrderDate" />
                     <ExcelColumn label="Depot" value="Depot" />
-                    <ExcelColumn label="Client names" value="Client names" />
-                    <ExcelColumn label="Order value" value="Order value" />
-                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
-                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
-                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
-                    <ExcelColumn label="Paid date" value="Paid date" />
-                    <ExcelColumn label="Truck used" value="Truck used" />
-                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn label="Client names" value="ClientNames" />
+                    <ExcelColumn label="Order value" value="OrderValue" />
+                    <ExcelColumn label="Paid Amount" value="PaidAmount" />
+                    <ExcelColumn label="Unpaid Amount" value="UnpaidAmount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMoRef" />
+                    <ExcelColumn label="Paid date" value="PaidDate" />
+                    <ExcelColumn label="Truck used" value="TruckUsed" />
+                    <ExcelColumn label="TIN Number" value="TINNumber" />
                     <ExcelColumn
                       label="EBM Processed: Yes/No"
-                      value="EBM Processed: Yes/No"
+                      value="EBMProcessed"
                     />
                     <ExcelColumn
                       label="Status"
@@ -607,43 +866,37 @@ const Home = () => {
                 </thead>
                 <tbody>
                   {match.map((d) => (
-                    <tr key={d["MoMo Ref"] && d["MoMo Ref"]}>
+                    <tr key={d?.MoMoRef}>
                       <th>
-                        {d["Order Date"] === "-" ||
-                        d["Order Date"] === "" ||
-                        d["Order Date"] === " -"
+                        {d?.OrderDate === "-" ||
+                        d?.OrderDate === "" ||
+                        d?.OrderDate === " -"
                           ? "-"
-                          : d["Order Date"] &&
-                            moment(d["Order Date"]).format().split("", 10)}
+                          : d?.OrderDate}
                       </th>
                       <th>{d?.Depot}</th>
-                      <th>{d["Client names"] && d["Client names"]}</th>
+                      <th>{d?.ClientNames}</th>
                       <th>
-                        {d["Order value"] && numberWithCommas(d["Order value"])}
+                        {d?.OrderValue && numberWithCommas(d?.OrderValue)}
                       </th>
                       <th>
-                        {d["Paid Amount"] && numberWithCommas(d["Paid Amount"])}
+                        {d?.PaidAmount && numberWithCommas(d?.PaidAmount)}
                       </th>
                       <th>
-                        {d["Unpaid Amount"] &&
-                          numberWithCommas(d["Unpaid Amount"])}
+                        {d?.UnpaidAmount && numberWithCommas(d?.UnpaidAmount)}
                       </th>
-                      <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
+                      <th>{d?.MoMoRef}</th>
 
                       <th>
-                        {d["Paid date"] === "-" ||
-                        d["Paid date"] === "" ||
-                        d["Paid date"] === " -"
+                        {d?.PaidDate === "-" ||
+                        d?.PaidDate === "" ||
+                        d?.PaidDate === " -"
                           ? "-"
-                          : d["Paid date"] &&
-                            moment(d["Paid date"]).format().split("", 10)}
+                          : d?.PaidDate}
                       </th>
-                      <th>{d["Truck used"] && d["Truck used"]}</th>
-                      <th>{d["TIN Number"] && d["TIN Number"]}</th>
-                      <th>
-                        {d["EBM Processed: Yes/No"] &&
-                          d["EBM Processed: Yes/No"]}
-                      </th>
+                      <th>{d?.TruckUsed}</th>
+                      <th>{d?.TINNumber}</th>
+                      <th>{d?.EBMProcessed}</th>
                       <th>
                         <BsCheckAll className="green" />
                       </th>
@@ -651,43 +904,37 @@ const Home = () => {
                   ))}
 
                   {unMatch.map((d) => (
-                    <tr key={d["MoMo Ref"] && d["Order Date"]}>
+                    <tr key={d?.MoMoRef}>
                       <th>
-                        {d["Order Date"] === "-" ||
-                        d["Order Date"] === "" ||
-                        d["Order Date"] === " -"
+                        {d?.OrderDate === "-" ||
+                        d?.OrderDate === "" ||
+                        d?.OrderDate === " -"
                           ? "-"
-                          : d["Order Date"] &&
-                            moment(d["Order Date"]).format().split("", 10)}
+                          : d?.OrderDate}
                       </th>
                       <th>{d?.Depot}</th>
-                      <th>{d["Client names"] && d["Client names"]}</th>
+                      <th>{d?.ClientNames}</th>
                       <th>
-                        {d["Order value"] && numberWithCommas(d["Order value"])}
+                        {d?.OrderValue && numberWithCommas(d?.OrderValue)}
                       </th>
                       <th>
-                        {d["Paid Amount"] && numberWithCommas(d["Paid Amount"])}
+                        {d?.PaidAmount && numberWithCommas(d?.PaidAmount)}
                       </th>
                       <th>
-                        {d["Unpaid Amount"] &&
-                          numberWithCommas(d["Unpaid Amount"])}
+                        {d?.UnpaidAmount && numberWithCommas(d?.UnpaidAmount)}
                       </th>
-                      <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
+                      <th>{d?.MoMoRef}</th>
 
                       <th>
-                        {d["Paid date"] === "-" ||
-                        d["Paid date"] === "" ||
-                        d["Paid date"] === " -"
+                        {d?.PaidDate === "-" ||
+                        d?.PaidDate === "" ||
+                        d?.PaidDate === " -"
                           ? "-"
-                          : d["Paid date"] &&
-                            moment(d["Paid date"]).format().split("", 10)}
+                          : d?.PaidDate}
                       </th>
-                      <th>{d["Truck used"] && d["Truck used"]}</th>
-                      <th>{d["TIN Number"] && d["TIN Number"]}</th>
-                      <th>
-                        {d["EBM Processed: Yes/No"] &&
-                          d["EBM Processed: Yes/No"]}
-                      </th>
+                      <th>{d?.TruckUsed}</th>
+                      <th>{d?.TINNumber}</th>
+                      <th>{d?.EBMProcessed}</th>
                       <th>
                         <VscError className="red" />
                       </th>
@@ -695,44 +942,38 @@ const Home = () => {
                   ))}
 
                   {unPaid.map((d) => (
-                    <tr key={d["MoMo Ref"] && d["Order Date"]}>
+                    <tr key={d?.OrderDate}>
                       <th>
-                        {d["Order Date"] === "-" ||
-                        d["Order Date"] === "" ||
-                        d["Order Date"] === " -"
+                        {d?.OrderDate === "-" ||
+                        d?.OrderDate === "" ||
+                        d?.OrderDate === " -"
                           ? "-"
-                          : d["Order Date"] &&
-                            moment(d["Order Date"]).format().split("", 10)}
+                          : d?.OrderDate}
                       </th>
                       <th>{d?.Depot}</th>
-                      <th>{d["Client names"] && d["Client names"]}</th>
+                      <th>{d?.ClientNames}</th>
                       <th>
-                        {d["Order value"] && numberWithCommas(d["Order value"])}
+                        {d?.OrderValue && numberWithCommas(d?.OrderValue)}
                       </th>
                       <th>
-                        {d["Paid Amount"] && numberWithCommas(d["Paid Amount"])}
+                        {d?.PaidAmount && numberWithCommas(d?.PaidAmount)}
                       </th>
                       <th>
-                        {d["Unpaid Amount"] &&
-                          numberWithCommas(d["Unpaid Amount"])}
+                        {d?.UnpaidAmount && numberWithCommas(d?.UnpaidAmount)}
                       </th>
-                      <th>{d["MoMo Ref"] && d["MoMo Ref"]}</th>
+                      <th>{d?.MoMoRef ? d?.MoMoRef : "-"}</th>
 
                       <th>
-                        {d["Paid date"] === "-" ||
-                        d["Paid date"] === "" ||
-                        d["Paid date"] === " -"
+                        {d?.PaidDate === "-" ||
+                        d?.PaidDate === "" ||
+                        d?.PaidDate === " -"
                           ? "-"
-                          : d["Paid date"] &&
-                            moment(d["Paid date"]).format().split("", 10)}
+                          : d?.PaidDate}
                       </th>
-                      <th>{d["Truck used"] && d["Truck used"]}</th>
-                      <th>{d["TIN Number"] && d["TIN Number"]}</th>
-                      <th>
-                        {d["EBM Processed: Yes/No"] &&
-                          d["EBM Processed: Yes/No"]}
-                      </th>
-                      <th className="red">Not paid</th>
+                      <th>{d?.TruckUsed}</th>
+                      <th>{d?.TINNumber}</th>
+                      <th>{d?.EBMProcessed}</th>
+                      <th className="red">Has no ref id</th>
                     </tr>
                   ))}
                 </tbody>
@@ -766,21 +1007,17 @@ const Home = () => {
                         manyRefData.map((d) => (
                           <tr key={d?.Id}>
                             <th>{d?.Id}</th>
-                            <th>
-                              {d["External Transaction Id"] &&
-                                d["External Transaction Id"]}
-                            </th>
+                            <th>{d?.ExternalTransactionId}</th>
                             <th>
                               {d?.Date === "-" ||
                               d?.Date === "" ||
                               d?.Date === " -"
                                 ? "-"
-                                : d?.Date &&
-                                  moment(d?.Date).format().split("", 10)}
+                                : d?.Date}
                             </th>
                             <th>{d?.Status}</th>
-                            <th>{d["From Name"] && d["From Name"]}</th>
-                            <th>{d["To Name"] && d["To Name"]}</th>
+                            <th>{d?.FromName}</th>
+                            <th>{d?.ToName}</th>
                             <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
                             <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
                             <th>
@@ -797,21 +1034,17 @@ const Home = () => {
                         manyRefDataNotFound.map((d) => (
                           <tr key={d?.Id}>
                             <th>{d?.Id}</th>
-                            <th>
-                              {d["External Transaction Id"] &&
-                                d["External Transaction Id"]}
-                            </th>
+                            <th>{d?.ExternalTransactionId}</th>
                             <th>
                               {d?.Date === "-" ||
                               d?.Date === "" ||
                               d?.Date === " -"
                                 ? "-"
-                                : d?.Date &&
-                                  moment(d?.Date).format().split("", 10)}
+                                : d?.Date}
                             </th>
                             <th>{d?.Status}</th>
-                            <th>{d["From Name"] && d["From Name"]}</th>
-                            <th>{d["To Name"] && d["To Name"]}</th>
+                            <th>{d?.FromName}</th>
+                            <th>{d?.ToName}</th>
                             <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
                             <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
                             <th>
@@ -850,12 +1083,12 @@ const Home = () => {
                     <ExcelColumn label="ID" value="Id" />
                     <ExcelColumn
                       label="External Transaction Id"
-                      value="External Transaction Id"
+                      value="ExternalTransactionId"
                     />
                     <ExcelColumn label="Date" value="Date" />
                     <ExcelColumn label="Status" value="Status" />
-                    <ExcelColumn label="From Name" value="From Name" />
-                    <ExcelColumn label="To Name" value="To Name" />
+                    <ExcelColumn label="From Name" value="FromName" />
+                    <ExcelColumn label="To Name" value="ToName" />
                     <ExcelColumn label="Amount" value="Amount" />
                     <ExcelColumn label="Fee" value="Fee" />
                     <ExcelColumn label="Balance" value="Balance" />
@@ -870,12 +1103,12 @@ const Home = () => {
                     <ExcelColumn label="ID" value="Id" />
                     <ExcelColumn
                       label="External Transaction Id"
-                      value="External Transaction Id"
+                      value="ExternalTransactionId"
                     />
                     <ExcelColumn label="Date" value="Date" />
                     <ExcelColumn label="Status" value="Status" />
-                    <ExcelColumn label="From Name" value="From Name" />
-                    <ExcelColumn label="To Name" value="To Name" />
+                    <ExcelColumn label="From Name" value="FromName" />
+                    <ExcelColumn label="To Name" value="ToName" />
                     <ExcelColumn label="Amount" value="Amount" />
                     <ExcelColumn label="Fee" value="Fee" />
                     <ExcelColumn label="Balance" value="Balance" />
@@ -900,12 +1133,12 @@ const Home = () => {
                     <ExcelColumn label="ID" value="Id" />
                     <ExcelColumn
                       label="External Transaction Id"
-                      value="External Transaction Id"
+                      value="ExternalTransactionId"
                     />
                     <ExcelColumn label="Date" value="Date" />
                     <ExcelColumn label="Status" value="Status" />
-                    <ExcelColumn label="From Name" value="From Name" />
-                    <ExcelColumn label="To Name" value="To Name" />
+                    <ExcelColumn label="From Name" value="FromName" />
+                    <ExcelColumn label="To Name" value="ToName" />
                     <ExcelColumn label="Amount" value="Amount" />
                     <ExcelColumn label="Fee" value="Fee" />
                     <ExcelColumn label="Balance" value="Balance" />
@@ -931,12 +1164,12 @@ const Home = () => {
                     <ExcelColumn label="ID" value="Id" />
                     <ExcelColumn
                       label="External Transaction Id"
-                      value="External Transaction Id"
+                      value="ExternalTransactionId"
                     />
                     <ExcelColumn label="Date" value="Date" />
                     <ExcelColumn label="Status" value="Status" />
-                    <ExcelColumn label="From Name" value="From Name" />
-                    <ExcelColumn label="To Name" value="To Name" />
+                    <ExcelColumn label="From Name" value="FromName" />
+                    <ExcelColumn label="To Name" value="ToName" />
                     <ExcelColumn label="Amount" value="Amount" />
                     <ExcelColumn label="Fee" value="Fee" />
                     <ExcelColumn label="Balance" value="Balance" />
@@ -977,18 +1210,15 @@ const Home = () => {
                   {macthedMOMO.map((d) => (
                     <tr key={d?.Id}>
                       <th>{d?.Id}</th>
-                      <th>
-                        {d["External Transaction Id"] &&
-                          d["External Transaction Id"]}
-                      </th>
+                      <th>{d?.ExternalTransactionId}</th>
                       <th>
                         {d?.Date === "-" || d?.Date === "" || d?.Date === " -"
                           ? "-"
-                          : d?.Date && moment(d?.Date).format().split("", 10)}
+                          : d?.Date}
                       </th>
                       <th>{d?.Status}</th>
-                      <th>{d["From Name"] && d["From Name"]}</th>
-                      <th>{d["To Name"] && d["To Name"]}</th>
+                      <th>{d?.FromName}</th>
+                      <th>{d?.ToName}</th>
                       <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
                       <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
                       <th>{d?.Balance && numberWithCommas(d?.Balance)}</th>
@@ -1001,18 +1231,15 @@ const Home = () => {
                   {unMatchedMOMO.map((d) => (
                     <tr key={d?.Id}>
                       <th>{d?.Id}</th>
-                      <th>
-                        {d["External Transaction Id"] &&
-                          d["External Transaction Id"]}
-                      </th>
+                      <th>{d?.ExternalTransactionId}</th>
                       <th>
                         {d?.Date === "-" || d?.Date === "" || d?.Date === " -"
                           ? "-"
-                          : d?.Date && moment(d?.Date).format().split("", 10)}
+                          : d?.Date}
                       </th>
                       <th>{d?.Status}</th>
-                      <th>{d["From Name"] && d["From Name"]}</th>
-                      <th>{d["To Name"] && d["To Name"]}</th>
+                      <th>{d?.FromName}</th>
+                      <th>{d?.ToName}</th>
                       <th>{d?.Amount && numberWithCommas(d?.Amount)}</th>
                       <th>{d?.Fee && numberWithCommas(d?.Fee)}</th>
                       <th>{d?.Balance && numberWithCommas(d?.Balance)}</th>
