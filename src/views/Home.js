@@ -409,7 +409,81 @@ const Home = () => {
                   element={
                     <Button>
                       <BiSpreadsheet />
-                      Download successfull results (Internal)
+                      Download All results (Internal)
+                    </Button>
+                  }
+                >
+                  <ExcelSheet data={match} name="Matchs (Internals)">
+                    <ExcelColumn label="Order Date" value="Order Date" />
+                    <ExcelColumn label="Depot" value="Depot" />
+                    <ExcelColumn label="Client names" value="Client names" />
+                    <ExcelColumn label="Order value" value="Order value" />
+                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
+                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
+                    <ExcelColumn label="Paid date" value="Paid date" />
+                    <ExcelColumn label="Truck used" value="Truck used" />
+                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn
+                      label="EBM Processed: Yes/No"
+                      value="EBM Processed: Yes/No"
+                    />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col["MoMo Ref"] ? "Match found" : null)}
+                    />
+                  </ExcelSheet>
+
+                  <ExcelSheet data={unMatch} name="Fails">
+                    <ExcelColumn label="Order Date" value="Order Date" />
+                    <ExcelColumn label="Depot" value="Depot" />
+                    <ExcelColumn label="Client names" value="Client names" />
+                    <ExcelColumn label="Order value" value="Order value" />
+                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
+                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
+                    <ExcelColumn label="Paid date" value="Paid date" />
+                    <ExcelColumn label="Truck used" value="Truck used" />
+                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn
+                      label="EBM Processed: Yes/No"
+                      value="EBM Processed: Yes/No"
+                    />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col?.Depot ? "No match" : null)}
+                    />
+                  </ExcelSheet>
+
+                  <ExcelSheet data={unPaid} name="Unpaid records">
+                    <ExcelColumn label="Order Date" value="Order Date" />
+                    <ExcelColumn label="Depot" value="Depot" />
+                    <ExcelColumn label="Client names" value="Client names" />
+                    <ExcelColumn label="Order value" value="Order value" />
+                    <ExcelColumn label="Paid Amount" value="Paid Amount" />
+                    <ExcelColumn label="Unpaid Amount" value="Unpaid Amount" />
+                    <ExcelColumn label="MoMo Ref" value="MoMo Ref" />
+                    <ExcelColumn label="Paid date" value="Paid date" />
+                    <ExcelColumn label="Truck used" value="Truck used" />
+                    <ExcelColumn label="TIN Number" value="TIN Number" />
+                    <ExcelColumn
+                      label="EBM Processed: Yes/No"
+                      value="EBM Processed: Yes/No"
+                    />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col?.Depot ? "Not paid" : null)}
+                    />
+                  </ExcelSheet>
+                </ExcelFile>
+              </div>
+
+              <div>
+                <ExcelFile
+                  element={
+                    <Button>
+                      <BiSpreadsheet />
+                      Download successfull results
                     </Button>
                   }
                 >
