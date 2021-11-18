@@ -283,7 +283,8 @@ const Home = () => {
                             d?.Date === "" ||
                             d?.Date === " -"
                               ? "-"
-                              : d?.Date && moment(d?.Date).format("LLL")}
+                              : d?.Date &&
+                                moment(d?.Date).format().split("", 10)}
                           </th>
                           <th>{d?.Status}</th>
                           <th>{d["From Name"] && d["From Name"]}</th>
@@ -357,7 +358,7 @@ const Home = () => {
                             d["Order Date"] === " -"
                               ? "-"
                               : d["Order Date"] &&
-                                moment(d["Order Date"]).format("LLL")}
+                                moment(d["Order Date"]).format().split("", 10)}
                           </th>
                           <th>{d?.Depot}</th>
                           <th>{d["Client names"] && d["Client names"]}</th>
@@ -381,7 +382,7 @@ const Home = () => {
                             d["Paid date"] === " -"
                               ? "-"
                               : d["Paid date"] &&
-                                moment(d["Paid date"]).format("LLL")}
+                                moment(d["Paid date"]).format().split("", 10)}
                           </th>
                           <th>{d["Truck used"] && d["Truck used"]}</th>
                           <th>{d["TIN Number"] && d["TIN Number"]}</th>
@@ -613,7 +614,7 @@ const Home = () => {
                         d["Order Date"] === " -"
                           ? "-"
                           : d["Order Date"] &&
-                            moment(d["Order Date"]).format("LLL")}
+                            moment(d["Order Date"]).format().split("", 10)}
                       </th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
@@ -635,7 +636,7 @@ const Home = () => {
                         d["Paid date"] === " -"
                           ? "-"
                           : d["Paid date"] &&
-                            moment(d["Paid date"]).format("LLL")}
+                            moment(d["Paid date"]).format().split("", 10)}
                       </th>
                       <th>{d["Truck used"] && d["Truck used"]}</th>
                       <th>{d["TIN Number"] && d["TIN Number"]}</th>
@@ -657,7 +658,7 @@ const Home = () => {
                         d["Order Date"] === " -"
                           ? "-"
                           : d["Order Date"] &&
-                            moment(d["Order Date"]).format("LLL")}
+                            moment(d["Order Date"]).format().split("", 10)}
                       </th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
@@ -679,7 +680,7 @@ const Home = () => {
                         d["Paid date"] === " -"
                           ? "-"
                           : d["Paid date"] &&
-                            moment(d["Paid date"]).format("LLL")}
+                            moment(d["Paid date"]).format().split("", 10)}
                       </th>
                       <th>{d["Truck used"] && d["Truck used"]}</th>
                       <th>{d["TIN Number"] && d["TIN Number"]}</th>
@@ -701,7 +702,7 @@ const Home = () => {
                         d["Order Date"] === " -"
                           ? "-"
                           : d["Order Date"] &&
-                            moment(d["Order Date"]).format("LLL")}
+                            moment(d["Order Date"]).format().split("", 10)}
                       </th>
                       <th>{d?.Depot}</th>
                       <th>{d["Client names"] && d["Client names"]}</th>
@@ -723,7 +724,7 @@ const Home = () => {
                         d["Paid date"] === " -"
                           ? "-"
                           : d["Paid date"] &&
-                            moment(d["Paid date"]).format("LLL")}
+                            moment(d["Paid date"]).format().split("", 10)}
                       </th>
                       <th>{d["Truck used"] && d["Truck used"]}</th>
                       <th>{d["TIN Number"] && d["TIN Number"]}</th>
@@ -774,7 +775,8 @@ const Home = () => {
                               d?.Date === "" ||
                               d?.Date === " -"
                                 ? "-"
-                                : d?.Date && moment(d?.Date).format("LLL")}
+                                : d?.Date &&
+                                  moment(d?.Date).format().split("", 10)}
                             </th>
                             <th>{d?.Status}</th>
                             <th>{d["From Name"] && d["From Name"]}</th>
@@ -804,7 +806,8 @@ const Home = () => {
                               d?.Date === "" ||
                               d?.Date === " -"
                                 ? "-"
-                                : d?.Date && moment(d?.Date).format("LLL")}
+                                : d?.Date &&
+                                  moment(d?.Date).format().split("", 10)}
                             </th>
                             <th>{d?.Status}</th>
                             <th>{d["From Name"] && d["From Name"]}</th>
@@ -981,7 +984,7 @@ const Home = () => {
                       <th>
                         {d?.Date === "-" || d?.Date === "" || d?.Date === " -"
                           ? "-"
-                          : d?.Date && moment(d?.Date).format("LLL")}
+                          : d?.Date && moment(d?.Date).format().split("", 10)}
                       </th>
                       <th>{d?.Status}</th>
                       <th>{d["From Name"] && d["From Name"]}</th>
@@ -1005,7 +1008,7 @@ const Home = () => {
                       <th>
                         {d?.Date === "-" || d?.Date === "" || d?.Date === " -"
                           ? "-"
-                          : d?.Date && moment(d?.Date).format("LLL")}
+                          : d?.Date && moment(d?.Date).format().split("", 10)}
                       </th>
                       <th>{d?.Status}</th>
                       <th>{d["From Name"] && d["From Name"]}</th>
