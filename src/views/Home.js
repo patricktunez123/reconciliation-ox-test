@@ -413,7 +413,7 @@ const Home = () => {
                     </Button>
                   }
                 >
-                  <ExcelSheet data={match} name="Matchs (Internals)">
+                  <ExcelSheet data={match} name="Matchs (Internal)">
                     <ExcelColumn label="Order Date" value="Order Date" />
                     <ExcelColumn label="Depot" value="Depot" />
                     <ExcelColumn label="Client names" value="Client names" />
@@ -434,7 +434,7 @@ const Home = () => {
                     />
                   </ExcelSheet>
 
-                  <ExcelSheet data={unMatch} name="Fails">
+                  <ExcelSheet data={unMatch} name="Fails (Internal)">
                     <ExcelColumn label="Order Date" value="Order Date" />
                     <ExcelColumn label="Depot" value="Depot" />
                     <ExcelColumn label="Client names" value="Client names" />
@@ -455,7 +455,7 @@ const Home = () => {
                     />
                   </ExcelSheet>
 
-                  <ExcelSheet data={unPaid} name="Unpaid records">
+                  <ExcelSheet data={unPaid} name="Unpaid records(Internal)">
                     <ExcelColumn label="Order Date" value="Order Date" />
                     <ExcelColumn label="Depot" value="Depot" />
                     <ExcelColumn label="Client names" value="Client names" />
@@ -834,6 +834,56 @@ const Home = () => {
           <div className="report_container">
             <div className="head">
               <h6>Reconsile results (MOMO) </h6>
+              <div>
+                <ExcelFile
+                  element={
+                    <Button>
+                      <BiSpreadsheet />
+                      Download All results (MOMO)
+                    </Button>
+                  }
+                >
+                  <ExcelSheet data={macthedMOMO} name="Matchs (MOMO)">
+                    <ExcelColumn label="ID" value="Id" />
+                    <ExcelColumn
+                      label="External Transaction Id"
+                      value="External Transaction Id"
+                    />
+                    <ExcelColumn label="Date" value="Date" />
+                    <ExcelColumn label="Status" value="Status" />
+                    <ExcelColumn label="From Name" value="From Name" />
+                    <ExcelColumn label="To Name" value="To Name" />
+                    <ExcelColumn label="Amount" value="Amount" />
+                    <ExcelColumn label="Fee" value="Fee" />
+                    <ExcelColumn label="Balance" value="Balance" />
+                    <ExcelColumn label="Currency" value="Currency" />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col?.Id ? "Match found" : null)}
+                    />
+                  </ExcelSheet>
+
+                  <ExcelSheet data={unMatchedMOMO} name="Fails (MOMO)">
+                    <ExcelColumn label="ID" value="Id" />
+                    <ExcelColumn
+                      label="External Transaction Id"
+                      value="External Transaction Id"
+                    />
+                    <ExcelColumn label="Date" value="Date" />
+                    <ExcelColumn label="Status" value="Status" />
+                    <ExcelColumn label="From Name" value="From Name" />
+                    <ExcelColumn label="To Name" value="To Name" />
+                    <ExcelColumn label="Amount" value="Amount" />
+                    <ExcelColumn label="Fee" value="Fee" />
+                    <ExcelColumn label="Balance" value="Balance" />
+                    <ExcelColumn label="Currency" value="Currency" />
+                    <ExcelColumn
+                      label="Status"
+                      value={(col) => (col?.Id ? "No match" : null)}
+                    />
+                  </ExcelSheet>
+                </ExcelFile>
+              </div>
               <div>
                 <ExcelFile
                   element={
